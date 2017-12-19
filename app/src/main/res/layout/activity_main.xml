@@ -26,7 +26,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginBottom="8dp"
         app:piv_animationType="slide"
-        app:piv_animationDuration="500"
+        app:piv_animationDuration="200"
         app:piv_interactiveAnimation="true"/>
 
     <Button

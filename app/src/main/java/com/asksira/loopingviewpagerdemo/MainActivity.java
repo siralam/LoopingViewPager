@@ -41,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
         indicatorView.setCount(viewPager.getIndicatorCount());
         viewPager.setIndicatorPageChangeListener(new AutoScrollViewPager.IndicatorPageChangeListener() {
             @Override
+            public void onIndicatorProgress(int selectingPosition, float progress) {
+                indicatorView.setProgress(selectingPosition, progress);
+            }
+
+            @Override
             public void onIndicatorPageChange(int newIndicatorPosition) {
                 indicatorView.setSelection(newIndicatorPosition);
             }
@@ -85,5 +90,6 @@ public class MainActivity extends AppCompatActivity {
             adapter.setItemList(createDummyItems());
             currentDataset = 1;
         }
+        indicatorView.setCount(viewPager.getIndicatorCount());
     }
 }

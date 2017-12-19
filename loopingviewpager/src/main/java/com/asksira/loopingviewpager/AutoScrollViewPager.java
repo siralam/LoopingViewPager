@@ -95,13 +95,14 @@ public class AutoScrollViewPager extends ViewPager {
         addOnPageChangeListener(new OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                int realPosition = getIndicatorPosition(true);
+                if (indicatorPageChangeListener != null) indicatorPageChangeListener.onIndicatorProgress(realPosition, positionOffset);
             }
 
             @Override
             public void onPageSelected(int position) {
                 currentPagePosition = position;
-                if (indicatorPageChangeListener != null) indicatorPageChangeListener.onIndicatorPageChange(getIndicatorPosition());
+                if (indicatorPageChangeListener != null) indicatorPageChangeListener.onIndicatorPageChange(getIndicatorPosition(false));
                 autoScrollHandler.removeCallbacks(autoScrollRunnable);
                 autoScrollHandler.postDelayed(autoScrollRunnable, interval);
             }
@@ -148,8 +149,34 @@ public class AutoScrollViewPager extends ViewPager {
      * A method that helps you integrate a ViewPager Indicator.
      * This method returns the expected position (Starting from 0) of indicators.
      */
-    public int getIndicatorPosition () {
-        return isInfinite ? currentPagePosition-1 : currentPagePosition;
+    public int getIndicatorPosition (boolean notYetSelected) {
+        if (notYetSelected) { //Selection is in progress. currentPagePosition is not yet updated.
+            if (!isInfinite) {
+                return currentPagePosition+1;
+            } else {
+                if (!(getAdapter() instanceof LoopingPagerAdapter)) return currentPagePosition;
+                if (currentPagePosition == 1) {
+                    return ((LoopingPagerAdapter)getAdapter()).getLastItemPosition() -1;
+                } else if (currentPagePosition == ((LoopingPagerAdapter)getAdapter()).getLastItemPosition()) {
+                    return 0;
+                } else {
+                    return currentPagePosition;
+                }
+            }
+        } else { //onPageSelectedIsTriggered. Now currentPagePosition has been updated to the new position.
+            if (!isInfinite) {
+                return currentPagePosition;
+            } else {
+                if (!(getAdapter() instanceof LoopingPagerAdapter)) return currentPagePosition;
+                if (currentPagePosition == 0) {
+                    return ((LoopingPagerAdapter)getAdapter()).getLastItemPosition();
+                } else if (currentPagePosition == ((LoopingPagerAdapter)getAdapter()).getLastItemPosition()+1) {
+                    return 0;
+                } else {
+                    return currentPagePosition-1;
+                }
+            }
+        }
     }
 
     /**
@@ -169,6 +196,7 @@ public class AutoScrollViewPager extends ViewPager {
     }
 
     public interface IndicatorPageChangeListener {
+        void onIndicatorProgress(int selectingPosition, float progress);
         void onIndicatorPageChange(int newIndicatorPosition);
     }
 

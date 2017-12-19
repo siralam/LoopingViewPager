@@ -109,4 +109,8 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
         }
         return arrayListPosition;
     }
+
+    public int getLastItemPosition() {
+        return itemList == null ? 0 : itemList.size();
+    }
 }
