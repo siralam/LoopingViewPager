@@ -2,6 +2,8 @@ package com.asksira.loopingviewpagerdemo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 import com.asksira.loopingviewpager.AutoScrollViewPager;
 
@@ -10,6 +12,10 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     AutoScrollViewPager viewPager;
+    DemoInfiniteAdapter adapter;
+    Button changeDatasetButton;
+
+    private int currentDataset = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,8 +23,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         viewPager = findViewById(R.id.viewpager);
+        changeDatasetButton = findViewById(R.id.change_dataset);
+        changeDatasetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeDataset();
+            }
+        });
 
-        viewPager.setAdapter(new DemoInfiniteAdapter(this, createDummyItems(), true));
+        adapter = new DemoInfiniteAdapter(this, createDummyItems(), true);
+        viewPager.setAdapter(adapter);
     }
 
     @Override
@@ -42,5 +56,22 @@ public class MainActivity extends AppCompatActivity {
         items.add(4, new PagerItem("https://www.daltonsbusiness.com/advice/wp-content/uploads/2017/10/mc.png", "McDonalds"));
         items.add(5, new PagerItem("https://i.imgur.com/VtQ3BKV.jpg", "Sen no Kiseki"));
         return items;
+    }
+
+    private ArrayList<PagerItem> createAnotherDummyItmes () {
+        ArrayList<PagerItem> items = new ArrayList<>();
+        items.add(0, new PagerItem("https://i.ytimg.com/vi/yhjXTatF9dE/maxresdefault.jpg", "Sora no Kiseki"));
+        items.add(1, new PagerItem("https://i.imgur.com/VtQ3BKV.jpg", "Sen no Kiseki"));
+        return items;
+    }
+
+    private void changeDataset () {
+        if (currentDataset == 1) {
+            adapter.setItemList(createAnotherDummyItmes());
+            currentDataset = 2;
+        } else {
+            adapter.setItemList(createDummyItems());
+            currentDataset = 1;
+        }
     }
 }

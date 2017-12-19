@@ -30,10 +30,12 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     }
 
     public void setItemList (ArrayList<T> itemList) {
+        viewList = new SparseArray<>();
         this.itemList = itemList;
         if (itemList.size() < 2) { //Meaningless to be infinite if there is only 1 item
             this.isInfinite = false;
         }
+        notifyDataSetChanged();
     }
 
     /**Child should override this method and return the View that it wish to instantiate.
