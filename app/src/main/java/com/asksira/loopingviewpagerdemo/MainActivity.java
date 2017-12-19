@@ -75,7 +75,14 @@ public class MainActivity extends AppCompatActivity {
         return items;
     }
 
-    private ArrayList<Integer> createAnotherDummyItems() {
+    private ArrayList<Integer> createSecondDummyItems() {
+        ArrayList<Integer> items = new ArrayList<>();
+        items.add(0, 1);
+        items.add(1, 2);
+        return items;
+    }
+
+    private ArrayList<Integer> createThirdDummyItems() {
         ArrayList<Integer> items = new ArrayList<>();
         items.add(0, 1);
         return items;
@@ -83,8 +90,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeDataset () {
         if (currentDataSet == 1) {
-            adapter.setItemList(createAnotherDummyItems());
-            currentDataSet = 2;
+            adapter.setItemList(createSecondDummyItems());
+            currentDataSet++;
+        } else if (currentDataSet == 2) {
+            adapter.setItemList(createThirdDummyItems());
+            currentDataSet++;
         } else {
             adapter.setItemList(createDummyItems());
             currentDataSet = 1;
