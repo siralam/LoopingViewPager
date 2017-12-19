@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.asksira.loopingviewpager.AutoScrollViewPager;
+import com.rd.PageIndicatorView;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
     AutoScrollViewPager viewPager;
     DemoInfiniteAdapter adapter;
+    PageIndicatorView indicatorView;
     Button changeDatasetButton;
 
     private int currentDataset = 1;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         viewPager = findViewById(R.id.viewpager);
+        indicatorView = findViewById(R.id.indicator);
         changeDatasetButton = findViewById(R.id.change_dataset);
         changeDatasetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,6 +36,15 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new DemoInfiniteAdapter(this, createDummyItems(), true);
         viewPager.setAdapter(adapter);
+
+        //Custom bind indicator
+        indicatorView.setCount(viewPager.getIndicatorCount());
+        viewPager.setIndicatorPageChangeListener(new AutoScrollViewPager.IndicatorPageChangeListener() {
+            @Override
+            public void onIndicatorPageChange(int newIndicatorPosition) {
+                indicatorView.setSelection(newIndicatorPosition);
+            }
+        });
     }
 
     @Override

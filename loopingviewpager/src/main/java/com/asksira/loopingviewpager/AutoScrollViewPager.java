@@ -36,6 +36,8 @@ public class AutoScrollViewPager extends ViewPager {
         }
     };
 
+    private IndicatorPageChangeListener indicatorPageChangeListener;
+
 
     public AutoScrollViewPager(Context context) {
         super(context);
@@ -99,6 +101,7 @@ public class AutoScrollViewPager extends ViewPager {
             @Override
             public void onPageSelected(int position) {
                 currentPagePosition = position;
+                if (indicatorPageChangeListener != null) indicatorPageChangeListener.onIndicatorPageChange(getIndicatorPosition());
                 autoScrollHandler.removeCallbacks(autoScrollRunnable);
                 autoScrollHandler.postDelayed(autoScrollRunnable, interval);
             }
@@ -141,5 +144,32 @@ public class AutoScrollViewPager extends ViewPager {
     }
 
 
+    /**
+     * A method that helps you integrate a ViewPager Indicator.
+     * This method returns the expected position (Starting from 0) of indicators.
+     */
+    public int getIndicatorPosition () {
+        return isInfinite ? currentPagePosition-1 : currentPagePosition;
+    }
+
+    /**
+     * A method that helps you integrate a ViewPager Indicator.
+     * This method returns the expected count of indicators.
+     */
+    public int getIndicatorCount () {
+        if (getAdapter() instanceof LoopingPagerAdapter) {
+            return ((LoopingPagerAdapter)getAdapter()).getListCount();
+        } else {
+            return getAdapter().getCount();
+        }
+    }
+
+    public void setIndicatorPageChangeListener (IndicatorPageChangeListener callback) {
+        this.indicatorPageChangeListener = callback;
+    }
+
+    public interface IndicatorPageChangeListener {
+        void onIndicatorPageChange(int newIndicatorPosition);
+    }
 
 }

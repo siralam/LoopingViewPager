@@ -17,6 +17,18 @@
         app:autoScroll="true"
         app:wrap_content="true"/>
 
+    <com.rd.PageIndicatorView
+        android:id="@+id/indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/viewpager"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="8dp"
+        app:piv_animationType="slide"
+        app:piv_animationDuration="500"
+        app:piv_interactiveAnimation="true"/>
+
     <Button
         android:id="@+id/change_dataset"
         android:layout_width="wrap_content"
