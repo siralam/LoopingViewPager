@@ -51,6 +51,7 @@ public class AutoScrollViewPager extends ViewPager {
             isInfinite = a.getBoolean(R.styleable.AutoScrollViewPager_isInfinite, false);
             isAutoScroll = a.getBoolean(R.styleable.AutoScrollViewPager_autoScroll, false);
             wrapContent = a.getBoolean(R.styleable.AutoScrollViewPager_wrap_content, true);
+            interval = a.getInt(R.styleable.AutoScrollViewPager_scrollInterval, 5000);
         } finally {
             a.recycle();
         }
