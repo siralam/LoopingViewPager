@@ -15,8 +15,8 @@ import android.view.View;
 
 public class AutoScrollViewPager extends ViewPager {
 
-    protected boolean isInfinite = false;
-    protected boolean isAutoScroll = true;
+    protected boolean isInfinite = true;
+    protected boolean isAutoScroll = false;
     protected boolean wrapContent = true;
 
     //AutoScroll
@@ -49,8 +49,8 @@ public class AutoScrollViewPager extends ViewPager {
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.AutoScrollViewPager, 0, 0);
         try {
             isInfinite = a.getBoolean(R.styleable.AutoScrollViewPager_isInfinite, false);
-            isAutoScroll = a.getBoolean(R.styleable.AutoScrollViewPager_autoScroll, true);
-            wrapContent = a.getBoolean(R.styleable.AutoScrollViewPager_autoScroll, true);
+            isAutoScroll = a.getBoolean(R.styleable.AutoScrollViewPager_autoScroll, false);
+            wrapContent = a.getBoolean(R.styleable.AutoScrollViewPager_wrap_content, true);
         } finally {
             a.recycle();
         }
