@@ -13,7 +13,7 @@ import android.view.View;
  * For infinite Scroll, you may use LoopingPagerAdapter.
  */
 
-public class AutoScrollViewPager extends ViewPager {
+public class LoopingViewPager extends ViewPager {
 
     protected boolean isInfinite = true;
     protected boolean isAutoScroll = false;
@@ -39,19 +39,19 @@ public class AutoScrollViewPager extends ViewPager {
     private IndicatorPageChangeListener indicatorPageChangeListener;
 
 
-    public AutoScrollViewPager(Context context) {
+    public LoopingViewPager(Context context) {
         super(context);
         init();
     }
 
-    public AutoScrollViewPager(Context context, AttributeSet attrs) {
+    public LoopingViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.AutoScrollViewPager, 0, 0);
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.LoopingViewPager, 0, 0);
         try {
-            isInfinite = a.getBoolean(R.styleable.AutoScrollViewPager_isInfinite, false);
-            isAutoScroll = a.getBoolean(R.styleable.AutoScrollViewPager_autoScroll, false);
-            wrapContent = a.getBoolean(R.styleable.AutoScrollViewPager_wrap_content, true);
-            interval = a.getInt(R.styleable.AutoScrollViewPager_scrollInterval, 5000);
+            isInfinite = a.getBoolean(R.styleable.LoopingViewPager_isInfinite, false);
+            isAutoScroll = a.getBoolean(R.styleable.LoopingViewPager_autoScroll, false);
+            wrapContent = a.getBoolean(R.styleable.LoopingViewPager_wrap_content, true);
+            interval = a.getInt(R.styleable.LoopingViewPager_scrollInterval, 5000);
         } finally {
             a.recycle();
         }

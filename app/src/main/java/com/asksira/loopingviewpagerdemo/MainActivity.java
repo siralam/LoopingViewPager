@@ -5,14 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.asksira.loopingviewpager.AutoScrollViewPager;
+import com.asksira.loopingviewpager.LoopingViewPager;
 import com.rd.PageIndicatorView;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    AutoScrollViewPager viewPager;
+    LoopingViewPager viewPager;
     DemoInfiniteAdapter adapter;
     PageIndicatorView indicatorView;
     Button changeDataSetButton;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Custom bind indicator
         indicatorView.setCount(viewPager.getIndicatorCount());
-        viewPager.setIndicatorPageChangeListener(new AutoScrollViewPager.IndicatorPageChangeListener() {
+        viewPager.setIndicatorPageChangeListener(new LoopingViewPager.IndicatorPageChangeListener() {
             @Override
             public void onIndicatorProgress(int selectingPosition, float progress) {
                 indicatorView.setProgress(selectingPosition, progress);

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.asksira.loopingviewpagerdemo.MainActivity">
 
-    <com.asksira.loopingviewpager.AutoScrollViewPager
+    <com.asksira.loopingviewpager.LoopingViewPager
         android:id="@+id/viewpager"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
