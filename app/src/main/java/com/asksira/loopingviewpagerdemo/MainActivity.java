@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Integer> createAnotherDummyItems() {
         ArrayList<Integer> items = new ArrayList<>();
         items.add(0, 1);
-        items.add(1, 2);
         return items;
     }
 
@@ -91,5 +90,6 @@ public class MainActivity extends AppCompatActivity {
             currentDataSet = 1;
         }
         indicatorView.setCount(viewPager.getIndicatorCount());
+        viewPager.reset();
     }
 }

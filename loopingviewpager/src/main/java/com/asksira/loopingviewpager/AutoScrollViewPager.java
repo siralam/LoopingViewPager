@@ -26,7 +26,7 @@ public class AutoScrollViewPager extends ViewPager {
     private Runnable autoScrollRunnable = new Runnable() {
         @Override
         public void run() {
-            if (getAdapter() == null || !isAutoScroll) return;
+            if (getAdapter() == null || !isAutoScroll || getAdapter().getCount() < 2) return;
             if (!isInfinite && getAdapter().getCount() - 1 == currentPagePosition) {
                 currentPagePosition = 0;
             } else {
@@ -189,6 +189,21 @@ public class AutoScrollViewPager extends ViewPager {
             return ((LoopingPagerAdapter)getAdapter()).getListCount();
         } else {
             return getAdapter().getCount();
+        }
+    }
+
+
+    /**
+     * This function needs to be called if dataSet has changed,
+     * in order to reset current selected item and currentPagePosition.
+     */
+    public void reset() {
+        if (isInfinite) {
+            setCurrentItem(1, false);
+            currentPagePosition = 1;
+        } else {
+            setCurrentItem(0, false);
+            currentPagePosition = 0;
         }
     }
 

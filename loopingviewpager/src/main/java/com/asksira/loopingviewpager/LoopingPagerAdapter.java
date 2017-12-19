@@ -22,6 +22,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     protected SparseArray<View> viewList = new SparseArray<>();
 
     protected boolean isInfinite = false;
+    protected boolean canInfinite = true;
 
     public LoopingPagerAdapter (Context context, ArrayList<T> itemList, boolean isInfinite) {
         this.context = context;
@@ -32,9 +33,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     public void setItemList (ArrayList<T> itemList) {
         viewList = new SparseArray<>();
         this.itemList = itemList;
-        if (itemList.size() < 2) { //Meaningless to be infinite if there is only 1 item
-            this.isInfinite = false;
-        }
+        canInfinite = itemList.size() > 1;
         notifyDataSetChanged();
     }
 
@@ -55,7 +54,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        int listPosition = isInfinite ? getListPosition(position) : position;
+        int listPosition = (isInfinite && canInfinite) ? getListPosition(position) : position;
 
         View convertView = viewList.get(position, null);
         convertView = getItemView(convertView, listPosition, (ViewPager)container);
@@ -86,7 +85,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
         if (itemList != null) {
             count = itemList.size();
         }
-        if (isInfinite) {
+        if (isInfinite && canInfinite) {
             return count + 2;
         } else {
             return count;
@@ -98,7 +97,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     }
 
     private int getListPosition (int position) {
-        if (!isInfinite) return position;
+        if (!(isInfinite && canInfinite)) return position;
         int arrayListPosition;
         if (position == 0) {
             arrayListPosition = getCount()-1-2; //First item is a dummy of last item
