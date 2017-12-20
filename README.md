@@ -12,21 +12,46 @@ A ViewPager and a PagerAdapter that can:
 
 ## Demo Effect
 
+Auto Scroll + Infinite Loop  
 <img src="https://raw.githubusercontent.com/siralam/LoopingViewPager/master/readme_images/loopingViewPager_auto.gif" width="360" height="640" alt="Auto Scroll and Infinite Loop" />
+
+Manual Scroll + Infinite Loop  
 <img src="https://raw.githubusercontent.com/siralam/LoopingViewPager/master/readme_images/loopingViewPager_manual.gif" width="360" height="640" alt="Auto Scroll and Infinite Loop" />
 
 ## Why this library
 
 Although there are already quite a number of similar libraries out there,  
-Few of them are able to support page indicators; or allow user to customize any page indicators.  
-Or some of them have insufficient documentations; or not maintained.
+I cannot find one that fits all of the below requirements:  
+
+1. Sufficient documentation
+2. Last updated in less than 3 years
+3. Good infinite looping effect 
+4. Configurable auto-scroll
+5. ViewPager that supports wrap_content (or at least aspect ratio)
+6. Good support with Page Indicators
+
+Especially for 6, even some of them supports, they provide built-in indicators only; or does not tell user how to implement their own indicator.  
 I wrote this library to tackle all of these problems I faced after trying a whole day with other libraries.
 
 ## Usage
 
 ### Add to Project
 
-TODO: Gradle
+First make sure `jcenter()` is included as a repository in your **project**'s build.gradle:  
+
+```
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+```
+
+And then add the below to your app's build.gradle:  
+
+```
+    implementation 'com.asksira.android:loopingviewpager:1.0.0'
+```
 
 ### Step 1: Create LoopingViewPager in XML
 
@@ -122,12 +147,13 @@ I don't provide a built-in page indicator because:
 1. ViewPager and Indicator are logically separated
 2. I want to make this library adaptable to all page indicators
 
-With that said, I designed this library using this [PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView) to make the demo and perform testings.
+With that said, I personally suggest using this [PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView).  
+I create this demo and tested using this library.
 
 ### Principle
 
 There are 2 callbacks in `LoopingViewPager` that are designed to tell a PageIndicator 2 things:
-1. I am now being scrolled to a new page, please update your indicator transitive position;
+1. I am now being scrolled to a new page, please update your indicator transition position;
 2. I am now being selected to a new page, please update your indicator selected position.
 
 And a public method `getIndicatorCount()` that can tell the indicator how many indicators(dots) should it show.
@@ -164,16 +190,27 @@ Don't forget to update the indicator counts if you updated items in adapter:
 indicatorView.setCount(viewPager.getIndicatorCount());
 ```
 
-By implementing this way, you can basically use any indicators you like, as long as that indicator allows you to manually `setCount()`, `setProgress()` and `setSelection()`.
+By implementing this way, you can basically use any indicators you like, as long as that indicator allows you to configure programmatically (1) The number of indicators; (2) Which indicator is selected. And even, if it supports, (3) The progress of indicator transition effect.
 
-**P.S.** However, due to [this bug of PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView/issues/51), the transitive effect on indicators cannot be shown until the author release [his fix in development branch](https://github.com/romandanylyk/PageIndicatorView/commit/3df8093276afa1e4d1f477444df3a20ce801a235).
+**P.S.** However, due to [this bug of PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView/issues/51), the transition effect on indicators cannot be shown until the author release [his fix in development branch](https://github.com/romandanylyk/PageIndicatorView/commit/3df8093276afa1e4d1f477444df3a20ce801a235).
 
 ## License
 
+```
 Copyright 2017 Sira Lam
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the LoopingViewPager), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and 
+associated documentation files (the LoopingViewPager), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or 
+substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
