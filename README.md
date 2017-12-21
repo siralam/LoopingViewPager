@@ -50,7 +50,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```
-    implementation 'com.asksira.android:loopingviewpager:1.0.0'
+    implementation 'com.asksira.android:loopingviewpager:1.0.1'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
