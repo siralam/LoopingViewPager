@@ -14,7 +14,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:isInfinite="true"
-        app:autoScroll="true"
+        app:autoScroll="false"
         app:scrollInterval="2000"
         app:wrap_content="true"/>
 

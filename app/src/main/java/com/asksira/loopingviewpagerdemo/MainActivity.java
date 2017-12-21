@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setIndicatorPageChangeListener(new LoopingViewPager.IndicatorPageChangeListener() {
             @Override
             public void onIndicatorProgress(int selectingPosition, float progress) {
-                indicatorView.setProgress(selectingPosition, progress);
+//                indicatorView.setProgress(selectingPosition, progress);
             }
 
             @Override

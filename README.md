@@ -174,7 +174,6 @@ And here is an example using [PageIndicatorView](https://github.com/romandanylyk
         viewPager.setIndicatorPageChangeListener(new LoopingViewPager.IndicatorPageChangeListener() {
             @Override
             public void onIndicatorProgress(int selectingPosition, float progress) {
-                indicatorView.setProgress(selectingPosition, progress);
             }
 
             @Override
@@ -192,7 +191,26 @@ indicatorView.setCount(viewPager.getIndicatorCount());
 
 By implementing this way, you can basically use any indicators you like, as long as that indicator allows you to configure programmatically (1) The number of indicators; (2) Which indicator is selected. And even, if it supports, (3) The progress of indicator transition effect.
 
-**P.S.** However, due to [this bug of PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView/issues/51), the transition effect on indicators cannot be shown until the author release [his fix in development branch](https://github.com/romandanylyk/PageIndicatorView/commit/3df8093276afa1e4d1f477444df3a20ce801a235).
+### Wait, if you want interactive indicator transition effect, please read this section
+
+However, due to [this bug of PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView/issues), the interactive transition effect on indicators cannot work properly.  
+
+LoopingViewPager will trigger `onIndicatorProgress()` when scroll state of `LoopingViewPager` is `SCROLL_STATE_DRAGGING`.  
+It will not trigger `onIndicatorProgress()` if scroll state is `SCROLL_STATE_SETTLING`.  
+In fact, when user releases his finger during swiping (where scroll state changes from `SCROLL_STATE_DRAGGING` to `SCROLL_STATE_SETTLING`), `onPageSelected()` will be called and therefore `onIndicatorPageChange()`.  
+LoopingViewPager expects the indicator will be able to **finish the animation by itself** after `indicatorView.setSelection()` (Or corresponding method of other libraries).
+
+(In fact, I tried to trigger `onIndicatorProgress()` even when scroll state is `SCROLL_STATE_SETTLING`. At first it seems to work good.  
+However, I cannot find a way to avoid problems that occur when user swipe fastly, i.e. from `SCROLL_STATE_SETTLING` directly to `SCROLL_STATE_DRAGGING` again **before the next page is selected**. So I decided to let indicator handles this.)
+
+For now, if you use [PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView/), do not call anything in `onIndicatorProgress()`.  
+If you really want the interactive transition effect during `SCROLL_STATE_DRAGGING`, I would suggest you use another library or implement your own one.
+
+## Release notes
+
+v1.0.1  
+- Fixed a bug where getSelectingIndicatorPosition() is returning incorrect value.
+- Updated README.md according to PageIndicatorView v1.0.0 update.
 
 ## License
 
