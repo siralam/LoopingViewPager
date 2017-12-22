@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
 
         //Custom bind indicator
-        viewPager.setIndicatorSmart(false);
         indicatorView.setCount(viewPager.getIndicatorCount());
         viewPager.setIndicatorPageChangeListener(new LoopingViewPager.IndicatorPageChangeListener() {
             @Override

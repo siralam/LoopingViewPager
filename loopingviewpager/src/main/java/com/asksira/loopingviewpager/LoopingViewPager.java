@@ -48,7 +48,7 @@ public class LoopingViewPager extends ViewPager {
      * If indicator is not smart, then LoopingViewPager will continue to fire onIndicatorProgress() to update the indicator
      * transition position.
      */
-    private boolean isIndicatorSmart = true;
+    private boolean isIndicatorSmart = false;
 
     public LoopingViewPager(Context context) {
         super(context);
