@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -37,9 +36,18 @@ public class LoopingViewPager extends ViewPager {
         }
     };
 
+    //For Indicator
     private IndicatorPageChangeListener indicatorPageChangeListener;
-
     private int scrollState = SCROLL_STATE_IDLE;
+    private boolean isToTheRight = true;
+    /**
+     * This boolean indicates whether LoopingViewPager needs to continuously tell the indicator about
+     * the progress of the scroll, even after onIndicatorPageChange().
+     * If indicator is smart, it should be able to finish the animation by itself after we told it that a position has been selected.
+     * If indicator is not smart, then LoopingViewPager will continue to fire onIndicatorProgress() to update the indicator
+     * transition position.
+     */
+    private boolean isIndicatorSmart = true;
 
     public LoopingViewPager(Context context) {
         super(context);
@@ -57,7 +65,6 @@ public class LoopingViewPager extends ViewPager {
             setPageTransformer(true, new PageTransformer() {
                 @Override
                 public void transformPage(View page, float position) {
-                    boolean isToTheRight;
                     if (position < -1) {
                         isToTheRight = true;
                     } else if (position <= 1) {
@@ -66,12 +73,26 @@ public class LoopingViewPager extends ViewPager {
                         isToTheRight = false;
                     }
 
-                    int realPosition = getSelectingIndicatorPosition(isToTheRight);
+                    if (indicatorPageChangeListener == null) return;
 
-                    if (indicatorPageChangeListener != null && scrollState == SCROLL_STATE_DRAGGING) {
-                        indicatorPageChangeListener.onIndicatorProgress(realPosition, Math.abs(position) - 1);
-                        Log.i("indicator", "Progress: " + realPosition + ", " + String.valueOf(Math.abs(position)-1)
-                                + ", ScrollState: " + scrollState + ", currentPagePosition: " + currentPagePosition);
+                    int realPosition = getSelectingIndicatorPosition(isToTheRight);
+                    float progress = Math.abs(position) - 1;
+
+                    if (progress < 0 || progress > 1) return;
+
+                    if (isIndicatorSmart) {
+                        if (scrollState != SCROLL_STATE_DRAGGING) return;
+                        indicatorPageChangeListener.onIndicatorProgress(realPosition, progress);
+                    } else {
+                        if (scrollState == SCROLL_STATE_DRAGGING) {
+                            if ((isToTheRight && Math.abs(realPosition - currentPagePosition) == 2) ||
+                                    !isToTheRight && realPosition == currentPagePosition) {
+                                //If this happens, it means user is fast scrolling where onPageSelected() is not fast enough
+                                //to catch up with the scroll, thus produce wrong position value.
+                                return;
+                            }
+                        }
+                        indicatorPageChangeListener.onIndicatorProgress(realPosition, progress);
                     }
                 }
             });
@@ -132,6 +153,13 @@ public class LoopingViewPager extends ViewPager {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                if (!isIndicatorSmart) {
+                    if (scrollState == SCROLL_STATE_SETTLING && state == SCROLL_STATE_DRAGGING) {
+                        if (indicatorPageChangeListener != null)
+                            indicatorPageChangeListener.onIndicatorProgress(
+                                    getSelectingIndicatorPosition(isToTheRight), 1);
+                    }
+                }
                 scrollState = state;
                 if (!isInfinite) return;
                 //Below are code to achieve infinite scroll.
@@ -197,6 +225,9 @@ public class LoopingViewPager extends ViewPager {
      * select a different page, i.e. onPageScrolled() is triggered.
      */
     public int getSelectingIndicatorPosition (boolean isToTheRight) {
+        if (scrollState == SCROLL_STATE_SETTLING || scrollState == SCROLL_STATE_IDLE) {
+            return getIndicatorPosition();
+        }
         int delta = isToTheRight ? 1 : -1;
         if (isInfinite) {
             if (!(getAdapter() instanceof LoopingPagerAdapter)) return currentPagePosition + delta;
@@ -238,6 +269,10 @@ public class LoopingViewPager extends ViewPager {
             setCurrentItem(0, false);
             currentPagePosition = 0;
         }
+    }
+
+    public void setIndicatorSmart (boolean isIndicatorSmart) {
+        this.isIndicatorSmart = isIndicatorSmart;
     }
 
     public void setIndicatorPageChangeListener(IndicatorPageChangeListener callback) {

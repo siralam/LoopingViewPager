@@ -38,16 +38,17 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
 
         //Custom bind indicator
+        viewPager.setIndicatorSmart(false);
         indicatorView.setCount(viewPager.getIndicatorCount());
         viewPager.setIndicatorPageChangeListener(new LoopingViewPager.IndicatorPageChangeListener() {
             @Override
             public void onIndicatorProgress(int selectingPosition, float progress) {
-//                indicatorView.setProgress(selectingPosition, progress);
+                indicatorView.setProgress(selectingPosition, progress);
             }
 
             @Override
             public void onIndicatorPageChange(int newIndicatorPosition) {
-                indicatorView.setSelection(newIndicatorPosition);
+//                indicatorView.setSelection(newIndicatorPosition);
             }
         });
     }
