@@ -116,4 +116,8 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
             return itemList == null ? 0 : itemList.size()-1;
         }
     }
+
+    public boolean isInfinite () {
+        return this.isInfinite;
+    }
 }

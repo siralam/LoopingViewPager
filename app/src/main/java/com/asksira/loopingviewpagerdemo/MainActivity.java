@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.asksira.loopingviewpager.LoopingViewPager;
 import com.rd.PageIndicatorView;
@@ -16,6 +17,14 @@ public class MainActivity extends AppCompatActivity {
     DemoInfiniteAdapter adapter;
     PageIndicatorView indicatorView;
     Button changeDataSetButton;
+
+    TextView changePageLabel;
+    Button page1;
+    Button page2;
+    Button page3;
+    Button page4;
+    Button page5;
+    Button page6;
 
     private int currentDataSet = 1;
 
@@ -34,6 +43,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        changePageLabel = findViewById(R.id.change_page_label);
+        page1 = findViewById(R.id.page1);
+        page2 = findViewById(R.id.page2);
+        page3 = findViewById(R.id.page3);
+        page4 = findViewById(R.id.page4);
+        page5 = findViewById(R.id.page5);
+        page6 = findViewById(R.id.page6);
+
         adapter = new DemoInfiniteAdapter(this, createDummyItems(), true);
         viewPager.setAdapter(adapter);
 
@@ -42,14 +59,29 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setIndicatorPageChangeListener(new LoopingViewPager.IndicatorPageChangeListener() {
             @Override
             public void onIndicatorProgress(int selectingPosition, float progress) {
-//                indicatorView.setProgress(selectingPosition, progress);
+                indicatorView.setProgress(selectingPosition, progress);
             }
 
             @Override
             public void onIndicatorPageChange(int newIndicatorPosition) {
-                indicatorView.setSelection(newIndicatorPosition);
+//                indicatorView.setSelection(newIndicatorPosition);
             }
         });
+
+        View.OnClickListener pageSelector = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Integer number = Integer.valueOf(((Button)v).getText().toString());
+                viewPager.setCurrentItem(adapter.isInfinite() ? number : number - 1);
+            }
+        };
+
+        page1.setOnClickListener(pageSelector);
+        page2.setOnClickListener(pageSelector);
+        page3.setOnClickListener(pageSelector);
+        page4.setOnClickListener(pageSelector);
+        page5.setOnClickListener(pageSelector);
+        page6.setOnClickListener(pageSelector);
     }
 
     @Override
@@ -92,14 +124,28 @@ public class MainActivity extends AppCompatActivity {
         if (currentDataSet == 1) {
             adapter.setItemList(createSecondDummyItems());
             currentDataSet++;
+            toggleSixButtons(false);
         } else if (currentDataSet == 2) {
             adapter.setItemList(createThirdDummyItems());
             currentDataSet++;
+            toggleSixButtons(false);
         } else {
             adapter.setItemList(createDummyItems());
             currentDataSet = 1;
+            toggleSixButtons(true);
         }
         indicatorView.setCount(viewPager.getIndicatorCount());
         viewPager.reset();
+    }
+
+    private void toggleSixButtons (boolean isVisible) {
+        int status = isVisible ? View.VISIBLE : View.GONE;
+        changePageLabel.setVisibility(status);
+        page1.setVisibility(status);
+        page2.setVisibility(status);
+        page3.setVisibility(status);
+        page4.setVisibility(status);
+        page5.setVisibility(status);
+        page6.setVisibility(status);
     }
 }

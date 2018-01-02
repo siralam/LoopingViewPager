@@ -15,7 +15,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:isInfinite="true"
         app:autoScroll="false"
-        app:scrollInterval="2000"
+        app:scrollInterval="3000"
         app:wrap_content="true"/>
 
     <com.rd.PageIndicatorView
@@ -39,5 +39,65 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="16dp"
         android:text="Switch DataSet"/>
+
+    <TextView
+        android:id="@+id/change_page_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/change_dataset"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="Change page programmatically: "
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <Button
+        android:id="@+id/page1"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="1"
+        app:layout_constraintTop_toBottomOf="@id/change_page_label"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/page2"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="2"
+        app:layout_constraintTop_toTopOf="@id/page1"
+        app:layout_constraintLeft_toRightOf="@id/page1"/>
+
+    <Button
+        android:id="@+id/page3"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="3"
+        app:layout_constraintTop_toTopOf="@id/page2"
+        app:layout_constraintLeft_toRightOf="@id/page2"/>
+
+    <Button
+        android:id="@+id/page4"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="4"
+        app:layout_constraintTop_toTopOf="@id/page3"
+        app:layout_constraintLeft_toRightOf="@id/page3"/>
+
+    <Button
+        android:id="@+id/page5"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="5"
+        app:layout_constraintTop_toTopOf="@id/page4"
+        app:layout_constraintLeft_toRightOf="@id/page4"/>
+
+    <Button
+        android:id="@+id/page6"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="6"
+        app:layout_constraintTop_toTopOf="@id/page5"
+        app:layout_constraintLeft_toRightOf="@id/page5"/>
 
 </android.support.constraint.ConstraintLayout>
