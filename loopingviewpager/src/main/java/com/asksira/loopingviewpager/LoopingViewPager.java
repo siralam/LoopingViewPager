@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -22,6 +21,7 @@ public class LoopingViewPager extends ViewPager {
 
     //AutoScroll
     private int interval = 5000;
+    private int previousPosition = 0;
     private int currentPagePosition = 0;
     private Handler autoScrollHandler = new Handler();
     private Runnable autoScrollRunnable = new Runnable() {
@@ -111,7 +111,7 @@ public class LoopingViewPager extends ViewPager {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (indicatorPageChangeListener == null) return;
 
-                if (position + positionOffset > sumPositionAndPositionOffset) {
+                if (position + positionOffset >= sumPositionAndPositionOffset) {
                     isToTheRight = true;
                 } else {
                     isToTheRight = false;
@@ -119,7 +119,19 @@ public class LoopingViewPager extends ViewPager {
                 sumPositionAndPositionOffset = position + positionOffset;
 
                 int realPosition = getSelectingIndicatorPosition(isToTheRight);
-                float progress = isToTheRight ? positionOffset : (1-positionOffset);
+
+                float progress;
+                if (scrollState == SCROLL_STATE_SETTLING && Math.abs(currentPagePosition - previousPosition) > 1) {
+                    int pageDiff = Math.abs(currentPagePosition - previousPosition);
+                    if (isToTheRight) {
+                        progress = (((float)(position - previousPosition) / pageDiff)) + (positionOffset / pageDiff);
+                    } else {
+                        progress = ((float)(previousPosition - (position + 1)) / pageDiff) + ((1 - positionOffset) / pageDiff);
+                    }
+                }
+                else {
+                    progress = isToTheRight ? positionOffset : (1-positionOffset);
+                }
 
                 if (progress == 0 || progress > 1) return;
 
@@ -136,13 +148,12 @@ public class LoopingViewPager extends ViewPager {
                         }
                     }
                     indicatorPageChangeListener.onIndicatorProgress(realPosition, progress);
-                    Log.i("indicator", "Progress: " + realPosition + ", " + progress
-                            + ", ScrollState: " + scrollState + ", currentPagePosition: " + currentPagePosition);
                 }
             }
 
             @Override
             public void onPageSelected(int position) {
+                previousPosition = currentPagePosition;
                 currentPagePosition = position;
                 if (indicatorPageChangeListener != null) {
                     indicatorPageChangeListener.onIndicatorPageChange(getIndicatorPosition());
@@ -162,24 +173,24 @@ public class LoopingViewPager extends ViewPager {
                     }
                 }
                 scrollState = state;
-                if (!isInfinite) return;
                 //Below are code to achieve infinite scroll.
                 //We silently and immediately flip the item to the first / last.
                 if (state == SCROLL_STATE_IDLE) {
-                    if (getAdapter() == null) return;
-                    int itemCount = getAdapter().getCount();
-                    if (itemCount < 2) {
-                        return;
-                    }
-                    int index = getCurrentItem();
-                    if (index == 0) {
-                        setCurrentItem(itemCount - 2, false); //Real last item
-                    } else if (index == itemCount - 1) {
-                        setCurrentItem(1, false); //Real first item
+                    if (isInfinite) {
+                        if (getAdapter() == null) return;
+                        int itemCount = getAdapter().getCount();
+                        if (itemCount < 2) {
+                            return;
+                        }
+                        int index = getCurrentItem();
+                        if (index == 0) {
+                            setCurrentItem(itemCount - 2, false); //Real last item
+                        } else if (index == itemCount - 1) {
+                            setCurrentItem(1, false); //Real first item
+                        }
                     }
                     if (indicatorPageChangeListener != null) {
                         indicatorPageChangeListener.onIndicatorProgress(getIndicatorPosition(), 1);
-                        Log.i("indicator", "idle: " + getIndicatorPosition());
                     }
                 }
             }

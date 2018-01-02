@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.asksira.loopingviewpager.LoopingViewPager;
 import com.rd.PageIndicatorView;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     PageIndicatorView indicatorView;
     Button changeDataSetButton;
 
+    TextView changePageLabel;
     Button page1;
     Button page2;
     Button page3;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        changePageLabel = findViewById(R.id.change_page_label);
         page1 = findViewById(R.id.page1);
         page2 = findViewById(R.id.page2);
         page3 = findViewById(R.id.page3);
@@ -68,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener pageSelector = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String number = ((Button)v).getText().toString();
-                viewPager.setCurrentItem(Integer.valueOf(number));
+                Integer number = Integer.valueOf(((Button)v).getText().toString());
+                viewPager.setCurrentItem(adapter.isInfinite() ? number : number - 1);
             }
         };
 
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void toggleSixButtons (boolean isVisible) {
         int status = isVisible ? View.VISIBLE : View.GONE;
+        changePageLabel.setVisibility(status);
         page1.setVisibility(status);
         page2.setVisibility(status);
         page3.setVisibility(status);

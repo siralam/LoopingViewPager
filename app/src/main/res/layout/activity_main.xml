@@ -15,7 +15,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:isInfinite="true"
         app:autoScroll="false"
-        app:scrollInterval="2000"
+        app:scrollInterval="3000"
         app:wrap_content="true"/>
 
     <com.rd.PageIndicatorView
