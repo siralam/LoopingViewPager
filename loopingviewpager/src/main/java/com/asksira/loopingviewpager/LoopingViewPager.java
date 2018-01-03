@@ -39,6 +39,7 @@ public class LoopingViewPager extends ViewPager {
 
     //For Indicator
     private IndicatorPageChangeListener indicatorPageChangeListener;
+    private int previousScrollState = SCROLL_STATE_IDLE;
     private int scrollState = SCROLL_STATE_IDLE;
     private boolean isToTheRight = true;
     /**
@@ -171,6 +172,7 @@ public class LoopingViewPager extends ViewPager {
                         }
                     }
                 }
+                previousScrollState = scrollState;
                 scrollState = state;
 
                 if (state == SCROLL_STATE_IDLE) {
@@ -242,7 +244,8 @@ public class LoopingViewPager extends ViewPager {
      * select a different page, i.e. onPageScrolled() is triggered.
      */
     public int getSelectingIndicatorPosition(boolean isToTheRight) {
-        if (scrollState == SCROLL_STATE_SETTLING || scrollState == SCROLL_STATE_IDLE) {
+        if (scrollState == SCROLL_STATE_SETTLING || scrollState == SCROLL_STATE_IDLE
+                || (previousScrollState == SCROLL_STATE_SETTLING && scrollState == SCROLL_STATE_DRAGGING)) {
             return getIndicatorPosition();
         }
         int delta = isToTheRight ? 1 : -1;
