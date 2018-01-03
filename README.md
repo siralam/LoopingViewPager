@@ -12,11 +12,11 @@ A ViewPager and a PagerAdapter that can:
 
 ## Demo Effect
 
-Auto Scroll + Infinite Loop  
-<img src="https://raw.githubusercontent.com/siralam/LoopingViewPager/master/readme_images/loopingViewPager_auto.gif" width="360" height="640" alt="Auto Scroll and Infinite Loop" />
-
-Manual Scroll + Infinite Loop  
-<img src="https://raw.githubusercontent.com/siralam/LoopingViewPager/master/readme_images/loopingViewPager_manual.gif" width="360" height="640" alt="Auto Scroll and Infinite Loop" />
+<p>
+<img src="readme_images/loopingViewPager_auto.gif" width="250" vspace="20" hspace="5" alt="Auto Scroll and Infinite Loop" />
+<img src="readme_images/loopingViewPagerDemo_2.gif" width="250" vspace="20" hspace="5" alt="Manual Scroll and Infinite Loop" />
+<img src="readme_images/loopingViewPagerDemo_3.gif" width="250" vspace="20" hspace="5" alt="Page skipping" />
+</p>
 
 ## Why this library
 
@@ -39,7 +39,7 @@ I wrote this library to tackle all of these problems I faced after trying a whol
 
 First make sure `jcenter()` is included as a repository in your **project**'s build.gradle:  
 
-```
+```groovy
 allprojects {
     repositories {
         jcenter()
@@ -49,8 +49,8 @@ allprojects {
 
 And then add the below to your app's build.gradle:  
 
-```
-    implementation 'com.asksira.android:loopingviewpager:1.0.1'
+```groovy
+    implementation 'com.asksira.android:loopingviewpager:1.0.4'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -62,7 +62,7 @@ And then add the below to your app's build.gradle:
         android:layout_height="wrap_content"
         app:isInfinite="true"
         app:autoScroll="true"
-        app:scrollInterval="2000"
+        app:scrollInterval="5000"
         app:wrap_content="true"/>
 ```
 
@@ -191,22 +191,54 @@ indicatorView.setCount(viewPager.getIndicatorCount());
 
 By implementing this way, you can basically use any indicators you like, as long as that indicator allows you to configure programmatically (1) The number of indicators; (2) Which indicator is selected. And even, if it supports, (3) The progress of indicator transition effect.
 
-### Wait, if you want interactive indicator transition effect, please read this section
+### Advanced: Interactive Indicator Animation
 
-However, due to [this bug of PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView/issues), the interactive transition effect on indicators cannot work properly.  
+You may have already noticed, there is an interactive effect - where the indicator position follows the swipe action of user, as shown in the second GIF in the demo section.
 
-LoopingViewPager will trigger `onIndicatorProgress()` when scroll state of `LoopingViewPager` is `SCROLL_STATE_DRAGGING`.  
-It will not trigger `onIndicatorProgress()` if scroll state is `SCROLL_STATE_SETTLING`.  
-In fact, when user releases his finger during swiping (where scroll state changes from `SCROLL_STATE_DRAGGING` to `SCROLL_STATE_SETTLING`), `onPageSelected()` will be called and therefore `onIndicatorPageChange()`.  
-LoopingViewPager expects the indicator will be able to **finish the animation by itself** after `indicatorView.setSelection()` (Or corresponding method of other libraries).
+If you want to do this, use the below instead:
 
-(In fact, I tried to trigger `onIndicatorProgress()` even when scroll state is `SCROLL_STATE_SETTLING`. At first it seems to work good.  
-However, I cannot find a way to avoid problems that occur when user swipe fastly, i.e. from `SCROLL_STATE_SETTLING` directly to `SCROLL_STATE_DRAGGING` again **before the next page is selected**. So I decided to let indicator handles this.)
+```java
+        viewPager.setIndicatorPageChangeListener(new LoopingViewPager.IndicatorPageChangeListener() {
+            @Override
+            public void onIndicatorProgress(int selectingPosition, float progress) {
+                indicatorView.setProgress(selectingPosition, progress);
+            }
 
-For now, if you use [PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView/), do not call anything in `onIndicatorProgress()`.  
-If you really want the interactive transition effect during `SCROLL_STATE_DRAGGING`, I would suggest you use another library or implement your own one.
+            @Override
+            public void onIndicatorPageChange(int newIndicatorPosition) {
+            }
+        });
+```
+
+In my demo, I am using the [PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView).  
+This PageIndicatorView expects you to handle the indicator progress solely by yourself, i.e. The indicator **will not finish its animation if you call setSelection()** on it.  
+e.g. I scrolled to 50% from page 1 to page 2. Then I released by finger. `PageIndicatorView` expects you to continue calling `setProgress()` from 0.5, 0.6, all the way to 0.99, 1.0; instead of calling `setCurrentItem()` the moment you released your finger.  
+I call this type of indicator **non-smart**. Default handling of LoopingViewPager treats indicator as non-smart.
+
+If you have another `IndicatorView` which is smart (i.e. It will finish the animation by itself if you call `setSelection()` the moment user released his finger), do the following:
+
+```java
+        viewPager.setIndicatorSmart(true);
+```
+
+By setting this, `LoopingViewPager` will call `onIndicatorProgress()` only when user is dragging, but not after he released his finger.  
+Therefore you should call `indicatorView.setSelection(newIndicatorPosition)` in `onIndicatorPageChange()`.
+
+
+However, I have to warn you that, up to the current release, the effect of `onIndicatorProgress()` is still imperfect on non-smart indicators.  
+As far as I can find out, I noticed the below problems:  
+1. If user swipes very fastly, i.e. before `ViewPager` reaches `SCROLL_STATE_IDLE`, directly from `SCROLL_STATE_SETTLING` to `SCROLL_STATE_DRAGGING`, the indicator will not move until user released his finger again. This is not obvious unless user is attempting to test this indicator effect.
+2. If user skip pages very fastly, e.g. from page 1 to page 6 and then to page 3 quickly, the indicator may appears in a wrong position for a short moment.
+
+if you cannot accept these minor defects, I suggest you use `onIndicatorPageChange()` only.
 
 ## Release notes
+
+v1.0.4
+- Indicator now works with page skipping as well (By calling `selectCurrentItem()`)
+- Leviated indicator fluctuating phenomenon when using `onIndicatorProgress()` callback
+- Added option for smart or non-smart indicators
+
 
 v1.0.1  
 - Fixed a bug where getSelectingIndicatorPosition() is returning incorrect value.
