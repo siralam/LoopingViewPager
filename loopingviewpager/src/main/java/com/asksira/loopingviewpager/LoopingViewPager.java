@@ -105,18 +105,18 @@ public class LoopingViewPager extends ViewPager {
 
     protected void init() {
         addOnPageChangeListener(new OnPageChangeListener() {
-            float sumPositionAndPositionOffset;
+            float currentPosition;
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (indicatorPageChangeListener == null) return;
 
-                if (position + positionOffset >= sumPositionAndPositionOffset) {
+                if (position + positionOffset >= currentPosition) {
                     isToTheRight = true;
                 } else {
                     isToTheRight = false;
                 }
-                sumPositionAndPositionOffset = position + positionOffset;
+                if (positionOffset == 0) currentPosition = position;
 
                 int realPosition = getSelectingIndicatorPosition(isToTheRight);
 
@@ -128,8 +128,7 @@ public class LoopingViewPager extends ViewPager {
                     } else {
                         progress = ((float)(previousPosition - (position + 1)) / pageDiff) + ((1 - positionOffset) / pageDiff);
                     }
-                }
-                else {
+                } else {
                     progress = isToTheRight ? positionOffset : (1-positionOffset);
                 }
 
@@ -173,9 +172,10 @@ public class LoopingViewPager extends ViewPager {
                     }
                 }
                 scrollState = state;
-                //Below are code to achieve infinite scroll.
-                //We silently and immediately flip the item to the first / last.
+
                 if (state == SCROLL_STATE_IDLE) {
+                    //Below are code to achieve infinite scroll.
+                    //We silently and immediately flip the item to the first / last.
                     if (isInfinite) {
                         if (getAdapter() == null) return;
                         int itemCount = getAdapter().getCount();
@@ -189,6 +189,7 @@ public class LoopingViewPager extends ViewPager {
                             setCurrentItem(1, false); //Real first item
                         }
                     }
+
                     if (indicatorPageChangeListener != null) {
                         indicatorPageChangeListener.onIndicatorProgress(getIndicatorPosition(), 1);
                     }
