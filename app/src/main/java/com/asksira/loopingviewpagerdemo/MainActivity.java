@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         items.add(3, 4);
         items.add(4, 5);
         items.add(5, 6);
+        items.add(6, 0);
         return items;
     }
 

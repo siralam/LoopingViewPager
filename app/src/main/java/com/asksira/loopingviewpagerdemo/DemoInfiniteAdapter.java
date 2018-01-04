@@ -11,17 +11,28 @@ import java.util.ArrayList;
 
 public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
 
+    private static final int VIEW_TYPE_NORMAL = 100;
+    private static final int VIEW_TYPE_SPECIAL = 101;
+
     public DemoInfiniteAdapter(Context context, ArrayList<Integer> itemList, boolean isInfinite) {
         super(context, itemList, isInfinite);
     }
 
     @Override
-    protected View inflateView() {
+    protected int getItemViewType(int listPosition) {
+        if (itemList.get(listPosition) == 0) return VIEW_TYPE_SPECIAL;
+        return VIEW_TYPE_NORMAL;
+    }
+
+    @Override
+    protected View inflateView(int viewType, int listPosition) {
+        if (viewType == VIEW_TYPE_SPECIAL) return LayoutInflater.from(context).inflate(R.layout.item_special, null);
         return LayoutInflater.from(context).inflate(R.layout.item_pager, null);
     }
 
     @Override
-    protected void bindView(View convertView, int listPosition) {
+    protected void bindView(View convertView, int listPosition, int viewType) {
+        if (viewType == VIEW_TYPE_SPECIAL) return;
         convertView.findViewById(R.id.image).setBackgroundColor(context.getResources().getColor(getBackgroundColor(listPosition)));
         TextView description = convertView.findViewById(R.id.description);
         description.setText(String.valueOf(itemList.get(listPosition)));

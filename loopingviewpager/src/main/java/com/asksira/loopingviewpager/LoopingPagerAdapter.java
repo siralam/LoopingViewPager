@@ -2,11 +2,11 @@ package com.asksira.loopingviewpager;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * A Pager Adapter that supports infinite loop.
@@ -18,10 +18,12 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
 
     protected Context context;
     protected ArrayList<T> itemList;
-    protected LinkedList<View> viewRecyclingBin = new LinkedList<>();
+    protected SparseArray<View> viewCache = new SparseArray<>();
 
     protected boolean isInfinite = false;
     protected boolean canInfinite = true;
+
+    private boolean dataSetChangeLock = false;
 
     public LoopingPagerAdapter (Context context, ArrayList<T> itemList, boolean isInfinite) {
         this.context = context;
@@ -30,7 +32,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     }
 
     public void setItemList (ArrayList<T> itemList) {
-        viewRecyclingBin = new LinkedList<>();
+        viewCache = new SparseArray<>();
         this.itemList = itemList;
         canInfinite = itemList.size() > 1;
         notifyDataSetChanged();
@@ -38,8 +40,10 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
 
     /**Child should override this method and return the View that it wish to inflate.
      * View binding with data should be in another method - bindView().
+     *
+     * @param listPosition The current list position for you to determine your own view type.
      */
-    protected abstract View inflateView();
+    protected abstract View inflateView(int viewType, int listPosition);
 
     /**
      * Child should override this method to bind the View with data.
@@ -47,8 +51,9 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
      * pass in your ViewHolder.
      *
      * @param convertView The View that needs to bind data with.
+     * @param listPosition The current list position for you to get data from itemList.
      */
-    protected abstract void bindView(View convertView, int listPosition);
+    protected abstract void bindView(View convertView, int listPosition, int viewType);
 
     public T getItem (int listPosition) {
         if (listPosition >= 0 && listPosition < itemList.size()) {
@@ -62,14 +67,17 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         int listPosition = (isInfinite && canInfinite) ? getListPosition(position) : position;
 
+        int viewType = getItemViewType(listPosition);
+
         View convertView;
-        if (viewRecyclingBin.size() == 0) {
-            convertView = inflateView();
+        if (viewCache.get(viewType, null) == null) {
+            convertView = inflateView(viewType, listPosition);
         } else {
-            convertView = viewRecyclingBin.removeFirst();
+            convertView = viewCache.get(viewType);
+            viewCache.remove(viewType);
         }
 
-        bindView(convertView, listPosition);
+        bindView(convertView, listPosition, viewType);
 
         container.addView(convertView);
 
@@ -83,8 +91,17 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
+        int listPosition = (isInfinite && canInfinite) ? getListPosition(position) : position;
+
         container.removeView((View)object);
-        viewRecyclingBin.add((View)object);
+        if (!dataSetChangeLock) viewCache.put(getItemViewType(listPosition), (View) object);
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        dataSetChangeLock = true;
+        super.notifyDataSetChanged();
+        dataSetChangeLock = false;
     }
 
     @Override
@@ -103,6 +120,17 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
         } else {
             return count;
         }
+    }
+
+    /**
+     * Allow child to implement view type by overriding this method.
+     * instantiateItem() will call this method to determine which view to recycle.
+     *
+     * @param listPosition Determine view type using listPosition.
+     * @return a key (View type ID) in the form of integer,
+     */
+    protected int getItemViewType (int listPosition) {
+        return 0;
     }
 
     public int getListCount () {
