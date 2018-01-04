@@ -9,6 +9,7 @@ A ViewPager and a PagerAdapter that can:
 5. Won't scroll nor loop if there is only 1 item
 6. Works well with notifyDataSetChanged()
 7. Supports page indicators
+8. Supports different view types
 
 ## Demo Effect
 
@@ -50,7 +51,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.0.5'
+    implementation 'com.asksira.android:loopingviewpager:1.1.0'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -98,7 +99,7 @@ public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
 
     //This method will be triggered if the item View has not been inflated before.
     @Override
-    protected View inflateView() {
+    protected View inflateView(int viewType, int listPosition) {
         return LayoutInflater.from(context).inflate(R.layout.item_pager, null);
     }
 
@@ -107,7 +108,7 @@ public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
     //You can assume convertView will not be null here.
     //You may also consider using a ViewHolder pattern.
     @Override
-    protected void bindView(View convertView, int listPosition) {
+    protected void bindView(View convertView, int listPosition, int viewType) {
         convertView.findViewById(R.id.image).setBackgroundColor(context.getResources().getColor(getBackgroundColor(listPosition)));
         TextView description = convertView.findViewById(R.id.description);
         description.setText(String.valueOf(itemList.get(listPosition)));
@@ -146,6 +147,21 @@ If you have new data to update to your adapter, simply call:
 adapter.setItemList(newItemList);
 viewPager.reset(); //In order to reset the current page position
 ```
+
+## How do I implement different View types?
+
+Simple! Override one more method in your Adapter:
+
+```java
+    @Override
+    protected int getItemViewType(int listPosition) {
+        //Return your own view type, same as what you did when using RecyclerView
+    }
+```
+
+And then, of course, according to the `viewtype` parameter passed to you in `inflateView()` and `bindView()`, differentiate what you need to inflate or bind.
+
+You may also refer to the demo app for a complete example.
 
 ## How do I integrate a Page Indicator?
 
@@ -239,6 +255,9 @@ As far as I can find out, I noticed the below problems:
 if you cannot accept these minor defects, I suggest you use `onIndicatorPageChange()` only.
 
 ## Release notes
+
+v1.1.0
+- Added support for view type. But therefore changed parameters needed in `inflateView()` and `bindView()`.
 
 v1.0.5
 - Added asepct ratio attribute for `LoopingViewPager`  
