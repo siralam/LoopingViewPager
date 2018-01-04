@@ -4,7 +4,7 @@ A ViewPager and a PagerAdapter that can:
 
 1. AutoScroll (On/Off able)
 2. Infinite Loop (On/Off able)
-3. ViewPager's height can be wrap_content
+3. ViewPager's height can be wrap_content / an aspect ratio
 4. Adjustable auto scroll interval
 5. Won't scroll nor loop if there is only 1 item
 6. Works well with notifyDataSetChanged()
@@ -27,7 +27,7 @@ I cannot find one that fits all of the below requirements:
 2. Last updated in less than 3 years
 3. Good infinite looping effect 
 4. Configurable auto-scroll
-5. ViewPager that supports wrap_content (or at least aspect ratio)
+5. ViewPager that supports fixed aspect ratio (Or wrap_content)
 6. Good support with Page Indicators
 
 Especially for 6, even some of them supports, they provide built-in indicators only; or does not tell user how to implement their own indicator.  
@@ -50,7 +50,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.0.4'
+    implementation 'com.asksira.android:loopingviewpager:1.0.5'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -63,15 +63,22 @@ And then add the below to your app's build.gradle:
         app:isInfinite="true"
         app:autoScroll="true"
         app:scrollInterval="5000"
-        app:wrap_content="true"/>
+        app:viewpagerAspectRatio="1.33"/>
 ```
 
-| Attribute Name   | Default | Allowed Values                |
-|:-----------------|:--------|:------------------------------|
-| isInfinite       | false   | true / false                  |
-| autoScroll       | false   | true / false                  |
-| wrap_content     | true    | true / false                  |
-| scrollInterval   | 5000    | any integer (represents ms)   | 
+| Attribute Name          | Default | Allowed Values                |
+|:------------------------|:--------|:------------------------------|
+| isInfinite              | false   | true / false                  |
+| autoScroll              | false   | true / false                  |
+| viewpagerAspectRatio    | 0       | any float (width / height)    |
+| wrap_content            | true    | true / false                  |
+| scrollInterval          | 5000    | any integer (represents ms)   | 
+
+viewpagerAspectRatio 0 means does not apply aspectRatio.  
+That means, default LoopingViewPager has no aspect ratio and wrap_content is true.  
+Once aspect ratio is set, wrap_content will be overrided (meaningless).
+
+In most cases, you should set an aspect ratio.  
 
 If you wonder why you need to set `app:wrap_content="true"`, take a look at [this Stackoverflow post](https://stackoverflow.com/questions/8394681/android-i-am-unable-to-have-viewpager-wrap-content).
 
@@ -80,7 +87,7 @@ If you wonder why you need to set `app:wrap_content="true"`, take a look at [thi
 You should
 1. Specify the data type in the generic (`<DataType>`)
 2. Create your own constructor according to this `DataType`
-3. override `getItemView`
+3. override `inflateView()` and `bindView()`
 
 ```java
 public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
@@ -89,22 +96,21 @@ public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
         super(context, itemList, isInfinite);
     }
 
-    //You should return the View (With data binded) to display in this method.
+    //This method will be triggered if the item View has not been inflated before.
     @Override
-    protected View getItemView(View convertView, int listPosition, ViewPager container) {
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_pager, null);
-            container.addView(convertView);
-        }
+    protected View inflateView() {
+        return LayoutInflater.from(context).inflate(R.layout.item_pager, null);
+    }
 
-        //Bind your view elements with data in itemList here. 
-        //You can also consider using a ViewHolder pattern.
-        //Below is just an example in the demo app.
+    //Bind your data with your item View here.
+    //Below is just an example in the demo app.
+    //You can assume convertView will not be null here.
+    //You may also consider using a ViewHolder pattern.
+    @Override
+    protected void bindView(View convertView, int listPosition) {
         convertView.findViewById(R.id.image).setBackgroundColor(context.getResources().getColor(getBackgroundColor(listPosition)));
         TextView description = convertView.findViewById(R.id.description);
         description.setText(String.valueOf(itemList.get(listPosition)));
-
-        return convertView;
     }
 }
 ```
@@ -233,6 +239,11 @@ As far as I can find out, I noticed the below problems:
 if you cannot accept these minor defects, I suggest you use `onIndicatorPageChange()` only.
 
 ## Release notes
+
+v1.0.5
+- Added asepct ratio attribute for `LoopingViewPager`  
+- Rewrote the way of caching Views in `LoopingPagerAdapter`, and therefore separated inflation and data binding  
+- Rewrote the way of implementing ViewPager wrap_content
 
 v1.0.4
 - Indicator now works with page skipping as well (By calling `selectCurrentItem()`)
