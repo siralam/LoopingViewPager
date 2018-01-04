@@ -1,7 +1,6 @@
 package com.asksira.loopingviewpagerdemo;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -17,16 +16,17 @@ public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
     }
 
     @Override
-    protected View getItemView(View convertView, int listPosition, ViewPager container) {
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_pager, null);
-            container.addView(convertView);
-        }
+    protected View inflateView() {
+        return LayoutInflater.from(context).inflate(R.layout.item_pager, null);
+    }
+
+    @Override
+    protected void bindView(View convertView, int listPosition) {
         convertView.findViewById(R.id.image).setBackgroundColor(context.getResources().getColor(getBackgroundColor(listPosition)));
         TextView description = convertView.findViewById(R.id.description);
         description.setText(String.valueOf(itemList.get(listPosition)));
-        return convertView;
     }
+
 
     private int getBackgroundColor (int number) {
         switch (number) {

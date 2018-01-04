@@ -18,6 +18,7 @@ public class LoopingViewPager extends ViewPager {
     protected boolean isInfinite = true;
     protected boolean isAutoScroll = false;
     protected boolean wrapContent = true;
+    protected float aspectRatio;
 
     //AutoScroll
     private int interval = 5000;
@@ -64,6 +65,7 @@ public class LoopingViewPager extends ViewPager {
             isAutoScroll = a.getBoolean(R.styleable.LoopingViewPager_autoScroll, false);
             wrapContent = a.getBoolean(R.styleable.LoopingViewPager_wrap_content, true);
             interval = a.getInt(R.styleable.LoopingViewPager_scrollInterval, 5000);
+            aspectRatio = a.getFloat(R.styleable.LoopingViewPager_viewpagerAspectRatio, 0f);
         } finally {
             a.recycle();
         }
@@ -72,36 +74,33 @@ public class LoopingViewPager extends ViewPager {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (!wrapContent) return;
-
-        // find the first child view
-        View view = getChildAt(0);
-        if (view != null) {
-            // measure the first child view with the specified measure spec
-            view.measure(widthMeasureSpec, heightMeasureSpec);
-        }
-
-        setMeasuredDimension(getMeasuredWidth(), measureHeight(heightMeasureSpec, view));
-    }
-
-    private int measureHeight(int measureSpec, View view) {
-        int result = 0;
-        int specMode = MeasureSpec.getMode(measureSpec);
-        int specSize = MeasureSpec.getSize(measureSpec);
-
-        if (specMode == MeasureSpec.EXACTLY) {
-            result = specSize;
+        if (aspectRatio > 0) {
+            int width = MeasureSpec.getSize(widthMeasureSpec);
+            int height = Math.round((float) MeasureSpec.getSize(widthMeasureSpec) / aspectRatio);
+            int finalWidthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+            int finalHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+            super.onMeasure(finalWidthMeasureSpec, finalHeightMeasureSpec);
         } else {
-            // set the height from the base view if available
-            if (view != null) {
-                result = view.getMeasuredHeight();
+            //https://stackoverflow.com/a/24666987/7870874
+            if (wrapContent) {
+                int mode = MeasureSpec.getMode(heightMeasureSpec);
+                // Unspecified means that the ViewPager is in a ScrollView WRAP_CONTENT.
+                // At Most means that the ViewPager is not in a ScrollView WRAP_CONTENT.
+                if (mode == MeasureSpec.UNSPECIFIED || mode == MeasureSpec.AT_MOST) {
+                    // super has to be called in the beginning so the child views can be initialized.
+                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                    int height = 0;
+                    for (int i = 0; i < getChildCount(); i++) {
+                        View child = getChildAt(i);
+                        child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                        int h = child.getMeasuredHeight();
+                        if (h > height) height = h;
+                    }
+                    heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+                }
             }
-            if (specMode == MeasureSpec.AT_MOST) {
-                result = Math.min(result, specSize);
-            }
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
-        return result;
     }
 
     protected void init() {
@@ -125,12 +124,12 @@ public class LoopingViewPager extends ViewPager {
                 if (scrollState == SCROLL_STATE_SETTLING && Math.abs(currentPagePosition - previousPosition) > 1) {
                     int pageDiff = Math.abs(currentPagePosition - previousPosition);
                     if (isToTheRight) {
-                        progress = (((float)(position - previousPosition) / pageDiff)) + (positionOffset / pageDiff);
+                        progress = (((float) (position - previousPosition) / pageDiff)) + (positionOffset / pageDiff);
                     } else {
-                        progress = ((float)(previousPosition - (position + 1)) / pageDiff) + ((1 - positionOffset) / pageDiff);
+                        progress = ((float) (previousPosition - (position + 1)) / pageDiff) + ((1 - positionOffset) / pageDiff);
                     }
                 } else {
-                    progress = isToTheRight ? positionOffset : (1-positionOffset);
+                    progress = isToTheRight ? positionOffset : (1 - positionOffset);
                 }
 
                 if (progress == 0 || progress > 1) return;

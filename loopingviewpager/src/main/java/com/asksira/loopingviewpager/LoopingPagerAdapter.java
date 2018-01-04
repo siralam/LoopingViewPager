@@ -2,12 +2,11 @@ package com.asksira.loopingviewpager;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * A Pager Adapter that supports infinite loop.
@@ -19,7 +18,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
 
     protected Context context;
     protected ArrayList<T> itemList;
-    protected SparseArray<View> viewList = new SparseArray<>();
+    protected LinkedList<View> viewRecyclingBin = new LinkedList<>();
 
     protected boolean isInfinite = false;
     protected boolean canInfinite = true;
@@ -31,18 +30,25 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     }
 
     public void setItemList (ArrayList<T> itemList) {
-        viewList = new SparseArray<>();
+        viewRecyclingBin = new LinkedList<>();
         this.itemList = itemList;
         canInfinite = itemList.size() > 1;
         notifyDataSetChanged();
     }
 
-    /**Child should override this method and return the View that it wish to instantiate.
-     * View binding with data should also be occurred here.
-     *
-     * @param convertView the View that it wants to instantiate. Suggest to use ViewHolder pattern.
+    /**Child should override this method and return the View that it wish to inflate.
+     * View binding with data should be in another method - bindView().
      */
-    protected abstract View getItemView(View convertView, int listPosition, ViewPager container);
+    protected abstract View inflateView();
+
+    /**
+     * Child should override this method to bind the View with data.
+     * If you wish to implement ViewHolder pattern, you may use setTag() on the convertView and
+     * pass in your ViewHolder.
+     *
+     * @param convertView The View that needs to bind data with.
+     */
+    protected abstract void bindView(View convertView, int listPosition);
 
     public T getItem (int listPosition) {
         if (listPosition >= 0 && listPosition < itemList.size()) {
@@ -56,9 +62,17 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         int listPosition = (isInfinite && canInfinite) ? getListPosition(position) : position;
 
-        View convertView = viewList.get(position, null);
-        convertView = getItemView(convertView, listPosition, (ViewPager)container);
-        viewList.put(position, convertView);
+        View convertView;
+        if (viewRecyclingBin.size() == 0) {
+            convertView = inflateView();
+        } else {
+            convertView = viewRecyclingBin.removeFirst();
+        }
+
+        bindView(convertView, listPosition);
+
+        container.addView(convertView);
+
         return convertView;
     }
 
@@ -70,8 +84,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View)object);
-        viewList.remove(position);
-        object = null;
+        viewRecyclingBin.add((View)object);
     }
 
     @Override
