@@ -3,6 +3,7 @@ package com.asksira.loopingviewpagerdemo;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.asksira.loopingviewpager.LoopingPagerAdapter;
@@ -25,9 +26,9 @@ public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
     }
 
     @Override
-    protected View inflateView(int viewType, int listPosition) {
-        if (viewType == VIEW_TYPE_SPECIAL) return LayoutInflater.from(context).inflate(R.layout.item_special, null);
-        return LayoutInflater.from(context).inflate(R.layout.item_pager, null);
+    protected View inflateView(int viewType, ViewGroup container, int listPosition) {
+        if (viewType == VIEW_TYPE_SPECIAL) return LayoutInflater.from(context).inflate(R.layout.item_special, container, false);
+        return LayoutInflater.from(context).inflate(R.layout.item_pager, container, false);
     }
 
     @Override

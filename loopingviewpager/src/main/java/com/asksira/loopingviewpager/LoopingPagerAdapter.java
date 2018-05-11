@@ -43,7 +43,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
      *
      * @param listPosition The current list position for you to determine your own view type.
      */
-    protected abstract View inflateView(int viewType, int listPosition);
+    protected abstract View inflateView(int viewType, ViewGroup container, int listPosition);
 
     /**
      * Child should override this method to bind the View with data.
@@ -71,7 +71,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
 
         View convertView;
         if (viewCache.get(viewType, null) == null) {
-            convertView = inflateView(viewType, listPosition);
+            convertView = inflateView(viewType, container, listPosition);
         } else {
             convertView = viewCache.get(viewType);
             viewCache.remove(viewType);

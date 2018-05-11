@@ -51,7 +51,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.1.0'
+    implementation 'com.asksira.android:loopingviewpager:1.1.1'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -99,8 +99,8 @@ public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
 
     //This method will be triggered if the item View has not been inflated before.
     @Override
-    protected View inflateView(int viewType, int listPosition) {
-        return LayoutInflater.from(context).inflate(R.layout.item_pager, null);
+    protected View inflateView(int viewType, ViewGroup container, int listPosition) {
+        return LayoutInflater.from(context).inflate(R.layout.item_pager, container, false);
     }
 
     //Bind your data with your item View here.
@@ -255,6 +255,10 @@ As far as I can find out, I noticed the below problems:
 if you cannot accept these minor defects, I suggest you use `onIndicatorPageChange()` only.
 
 ## Release notes
+
+v1.1.1
+- Added `ViewGroup container` as an argument to `inflateView()`. You should now use it as the parent of when you inflate your view.  
+- Updated gradle version and support library version.
 
 v1.1.0
 - Added support for view type. But therefore changed parameters needed in `inflateView()` and `bindView()`.

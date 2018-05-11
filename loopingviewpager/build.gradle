@@ -1,15 +1,15 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
 
 
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
-        versionCode 110
-        versionName "1.1.0"
+        targetSdkVersion 27
+        versionCode 111
+        versionName "1.1.1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -25,8 +25,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    api 'com.android.support:appcompat-v7:27.1.1'
 }
 
 ext {
@@ -42,7 +41,7 @@ ext {
     siteUrl = 'https://github.com/siralam/LoopingViewPager'
     gitUrl = 'https://github.com/siralam/LoopingViewPager.git'
 
-    libraryVersion = '1.1.0'
+    libraryVersion = '1.1.1'
 
     developerId = 'siralam'
     developerName = 'Sira Lam'
