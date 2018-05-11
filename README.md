@@ -51,7 +51,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.1.1'
+    implementation 'com.asksira.android:loopingviewpager:1.1.2'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -256,7 +256,7 @@ if you cannot accept these minor defects, I suggest you use `onIndicatorPageChan
 
 ## Release notes
 
-v1.1.1
+v1.1.2
 - Added `ViewGroup container` as an argument to `inflateView()`. You should now use it as the parent of when you inflate your view.  
 - Updated gradle version and support library version.
 

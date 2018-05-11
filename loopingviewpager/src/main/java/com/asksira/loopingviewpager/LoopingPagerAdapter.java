@@ -6,7 +6,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Pager Adapter that supports infinite loop.
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
 
     protected Context context;
-    protected ArrayList<T> itemList;
+    protected List<T> itemList;
     protected SparseArray<View> viewCache = new SparseArray<>();
 
     protected boolean isInfinite = false;
@@ -25,20 +25,21 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
 
     private boolean dataSetChangeLock = false;
 
-    public LoopingPagerAdapter (Context context, ArrayList<T> itemList, boolean isInfinite) {
+    public LoopingPagerAdapter(Context context, List<T> itemList, boolean isInfinite) {
         this.context = context;
         this.isInfinite = isInfinite;
         setItemList(itemList);
     }
 
-    public void setItemList (ArrayList<T> itemList) {
+    public void setItemList(List<T> itemList) {
         viewCache = new SparseArray<>();
         this.itemList = itemList;
         canInfinite = itemList.size() > 1;
         notifyDataSetChanged();
     }
 
-    /**Child should override this method and return the View that it wish to inflate.
+    /**
+     * Child should override this method and return the View that it wish to inflate.
      * View binding with data should be in another method - bindView().
      *
      * @param listPosition The current list position for you to determine your own view type.
@@ -50,12 +51,12 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
      * If you wish to implement ViewHolder pattern, you may use setTag() on the convertView and
      * pass in your ViewHolder.
      *
-     * @param convertView The View that needs to bind data with.
+     * @param convertView  The View that needs to bind data with.
      * @param listPosition The current list position for you to get data from itemList.
      */
     protected abstract void bindView(View convertView, int listPosition, int viewType);
 
-    public T getItem (int listPosition) {
+    public T getItem(int listPosition) {
         if (listPosition >= 0 && listPosition < itemList.size()) {
             return itemList.get(listPosition);
         } else {
@@ -93,7 +94,7 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         int listPosition = (isInfinite && canInfinite) ? getListPosition(position) : position;
 
-        container.removeView((View)object);
+        container.removeView((View) object);
         if (!dataSetChangeLock) viewCache.put(getItemViewType(listPosition), (View) object);
     }
 
@@ -129,36 +130,36 @@ public abstract class LoopingPagerAdapter<T> extends PagerAdapter {
      * @param listPosition Determine view type using listPosition.
      * @return a key (View type ID) in the form of integer,
      */
-    protected int getItemViewType (int listPosition) {
+    protected int getItemViewType(int listPosition) {
         return 0;
     }
 
-    public int getListCount () {
+    public int getListCount() {
         return itemList == null ? 0 : itemList.size();
     }
 
-    private int getListPosition (int position) {
+    private int getListPosition(int position) {
         if (!(isInfinite && canInfinite)) return position;
-        int arrayListPosition;
+        int listPosition;
         if (position == 0) {
-            arrayListPosition = getCount()-1-2; //First item is a dummy of last item
-        } else if (position > getCount() -2) {
-            arrayListPosition = 0; //Last item is a dummy of first item
+            listPosition = getCount() - 1 - 2; //First item is a dummy of last item
+        } else if (position > getCount() - 2) {
+            listPosition = 0; //Last item is a dummy of first item
         } else {
-            arrayListPosition = position - 1;
+            listPosition = position - 1;
         }
-        return arrayListPosition;
+        return listPosition;
     }
 
     public int getLastItemPosition() {
         if (isInfinite) {
             return itemList == null ? 0 : itemList.size();
         } else {
-            return itemList == null ? 0 : itemList.size()-1;
+            return itemList == null ? 0 : itemList.size() - 1;
         }
     }
 
-    public boolean isInfinite () {
+    public boolean isInfinite() {
         return this.isInfinite;
     }
 }
