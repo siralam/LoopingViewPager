@@ -74,8 +74,8 @@ public class LoopingViewPager extends ViewPager {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
         if (aspectRatio > 0) {
-            int width = MeasureSpec.getSize(widthMeasureSpec);
             int height = Math.round((float) MeasureSpec.getSize(widthMeasureSpec) / aspectRatio);
             int finalWidthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
             int finalHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
@@ -90,12 +90,20 @@ public class LoopingViewPager extends ViewPager {
                     // super has to be called in the beginning so the child views can be initialized.
                     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
                     int height = 0;
+                    // Remove padding from width
+                    int childWidthSize = width - getPaddingLeft() - getPaddingRight();
+                    // Make child width MeasureSpec
+                    int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidthSize, MeasureSpec.EXACTLY);
                     for (int i = 0; i < getChildCount(); i++) {
                         View child = getChildAt(i);
-                        child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                        child.measure(childWidthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
                         int h = child.getMeasuredHeight();
-                        if (h > height) height = h;
+                        if (h > height)  {
+                            height = h;
+                        }
                     }
+                    // Add padding back to child height
+                    height += getPaddingTop() + getPaddingBottom();
                     heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
                 }
             }
