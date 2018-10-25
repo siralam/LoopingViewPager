@@ -304,4 +304,14 @@ public class LoopingViewPager extends ViewPager {
         void onIndicatorPageChange(int newIndicatorPosition);
     }
 
+    public void setInterval(int interval) {
+        this.interval = interval;
+        resetAutoScroll();
+    }
+
+    private void resetAutoScroll() {
+        pauseAutoScroll();
+        resumeAutoScroll();
+    }
+
 }
