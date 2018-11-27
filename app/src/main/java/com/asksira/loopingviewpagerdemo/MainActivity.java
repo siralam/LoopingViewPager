@@ -1,7 +1,6 @@
 package com.asksira.loopingviewpagerdemo;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -10,6 +9,8 @@ import com.asksira.loopingviewpager.LoopingViewPager;
 import com.rd.PageIndicatorView;
 
 import java.util.ArrayList;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 

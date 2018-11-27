@@ -1,12 +1,13 @@
 package com.asksira.loopingviewpager;
 
 import android.content.Context;
-import android.support.v4.view.PagerAdapter;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 /**
  * A Pager Adapter that supports infinite loop.
