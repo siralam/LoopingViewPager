@@ -28,7 +28,7 @@ I cannot find one that fits all of the below requirements:
 2. Last updated in less than 3 years
 3. Good infinite looping effect 
 4. Configurable auto-scroll
-5. ViewPager that supports fixed aspect ratio (Or wrap_content)
+5. ViewPager that supports fixed aspect ratio
 6. Good support with Page Indicators
 
 Especially for 6, even some of them supports, they provide built-in indicators only; or does not tell user how to implement their own indicator.  
@@ -51,7 +51,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.1.2'
+    implementation 'com.asksira.android:loopingviewpager:1.1.3'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -67,13 +67,13 @@ And then add the below to your app's build.gradle:
         app:viewpagerAspectRatio="1.33"/>
 ```
 
-| Attribute Name          | Default | Allowed Values                |
-|:------------------------|:--------|:------------------------------|
-| isInfinite              | false   | true / false                  |
-| autoScroll              | false   | true / false                  |
-| viewpagerAspectRatio    | 0       | any float (width / height)    |
-| wrap_content            | true    | true / false                  |
-| scrollInterval          | 5000    | any integer (represents ms)   | 
+| Attribute Name           | Default | Allowed Values                |
+|:-------------------------|:--------|:------------------------------|
+| isInfinite               | false   | true / false                  |
+| autoScroll               | false   | true / false                  |
+| viewpagerAspectRatio     | 0       | any float (width / height)    |
+| wrap_content(deprecated) | true    | true / false                  |
+| scrollInterval           | 5000    | any integer (represents ms)   | 
 
 viewpagerAspectRatio 0 means does not apply aspectRatio.  
 That means, default LoopingViewPager has no aspect ratio and wrap_content is true.  
@@ -82,6 +82,8 @@ Once aspect ratio is set, wrap_content will be overrided (meaningless).
 In most cases, you should set an aspect ratio.  
 
 If you wonder why you need to set `app:wrap_content="true"`, take a look at [this Stackoverflow post](https://stackoverflow.com/questions/8394681/android-i-am-unable-to-have-viewpager-wrap-content).
+
+**wrap_content is deprecated in v1.1.3**. It is still available but I think there can be unknown problems. I am not going to debug issues related to setting wrap_content to true as well.
 
 ### Step 2: Create your PagerAdapter that extends LoopingPagerAdapter
 
@@ -255,6 +257,9 @@ As far as I can find out, I noticed the below problems:
 if you cannot accept these minor defects, I suggest you use `onIndicatorPageChange()` only.
 
 ## Release notes
+
+v1.1.3
+- Merged #15 which includes AndroidX support and `resetAutoScroll()` which is equivalent to `pauseAutoScroll()` and then `resumeAutoScroll()`.
 
 v1.1.2
 - Added `ViewGroup container` as an argument to `inflateView()`. You should now use it as the parent of when you inflate your view.  
