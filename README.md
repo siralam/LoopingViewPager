@@ -51,7 +51,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.1.3'
+    implementation 'com.asksira.android:loopingviewpager:1.1.4'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -257,6 +257,9 @@ As far as I can find out, I noticed the below problems:
 if you cannot accept these minor defects, I suggest you use `onIndicatorPageChange()` only.
 
 ## Release notes
+
+v1.1.4
+- Merged #11.
 
 v1.1.3
 - Merged #15 which includes AndroidX support and `resetAutoScroll()` which is equivalent to `pauseAutoScroll()` and then `resumeAutoScroll()`.
