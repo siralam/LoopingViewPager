@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 113
-        versionName "1.1.3"
+        versionCode 114
+        versionName "1.1.4"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -41,7 +41,7 @@ ext {
     siteUrl = 'https://github.com/siralam/LoopingViewPager'
     gitUrl = 'https://github.com/siralam/LoopingViewPager.git'
 
-    libraryVersion = '1.1.3'
+    libraryVersion = '1.1.4'
 
     developerId = 'siralam'
     developerName = 'Sira Lam'
