@@ -25,6 +25,7 @@ public class LoopingViewPager extends ViewPager {
     private int interval = 5000;
     private int previousPosition = 0;
     private int currentPagePosition = 0;
+    private boolean isAutoScrollResumed = false;
     private Handler autoScrollHandler = new Handler();
     private Runnable autoScrollRunnable = new Runnable() {
         @Override
@@ -67,6 +68,7 @@ public class LoopingViewPager extends ViewPager {
             wrapContent = a.getBoolean(R.styleable.LoopingViewPager_wrap_content, true);
             interval = a.getInt(R.styleable.LoopingViewPager_scrollInterval, 5000);
             aspectRatio = a.getFloat(R.styleable.LoopingViewPager_viewpagerAspectRatio, 0f);
+            isAutoScrollResumed = isAutoScroll;
         } finally {
             a.recycle();
         }
@@ -166,8 +168,10 @@ public class LoopingViewPager extends ViewPager {
                 if (indicatorPageChangeListener != null) {
                     indicatorPageChangeListener.onIndicatorPageChange(getIndicatorPosition());
                 }
-                autoScrollHandler.removeCallbacks(autoScrollRunnable);
-                autoScrollHandler.postDelayed(autoScrollRunnable, interval);
+                if(isAutoScrollResumed) {
+                    autoScrollHandler.removeCallbacks(autoScrollRunnable);
+                    autoScrollHandler.postDelayed(autoScrollRunnable, interval);
+                }
             }
 
             @Override
@@ -216,10 +220,12 @@ public class LoopingViewPager extends ViewPager {
     }
 
     public void resumeAutoScroll() {
+        isAutoScrollResumed = true;
         autoScrollHandler.postDelayed(autoScrollRunnable, interval);
     }
 
     public void pauseAutoScroll() {
+        isAutoScrollResumed = false;
         autoScrollHandler.removeCallbacks(autoScrollRunnable);
     }
 
