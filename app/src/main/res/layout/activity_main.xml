@@ -15,8 +15,10 @@
         app:layout_constraintRight_toRightOf="parent"
         app:isInfinite="true"
         app:autoScroll="true"
-        app:scrollInterval="3000"
-        app:wrap_content="true"/>
+        android:clipToPadding="false"
+        app:viewpagerAspectRatio="1.78"
+        app:itemAspectRatio="1.33"
+        app:scrollInterval="3000"/>
 
     <com.rd.PageIndicatorView
         android:id="@+id/indicator"

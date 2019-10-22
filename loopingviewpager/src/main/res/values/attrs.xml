@@ -7,6 +7,7 @@
         <attr name="wrap_content" format="boolean" />
         <attr name="scrollInterval" format="integer"/>
         <attr name="viewpagerAspectRatio" format="float"/>
+        <attr name="itemAspectRatio" format="float"/>
     </declare-styleable>
 
 </resources>
