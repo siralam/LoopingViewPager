@@ -10,6 +10,7 @@ A ViewPager and a PagerAdapter that can:
 6. Works well with notifyDataSetChanged()
 7. Supports page indicators
 8. Supports different view types
+9. **(New! 1.2.0)** Support peeking adjacent items (But first and last item will appear only after scroll state is idle)
 
 ## Demo Effect
 
@@ -51,7 +52,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.1.4'
+    implementation 'com.asksira.android:loopingviewpager:1.2.0'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -64,7 +65,9 @@ And then add the below to your app's build.gradle:
         app:isInfinite="true"
         app:autoScroll="true"
         app:scrollInterval="5000"
-        app:viewpagerAspectRatio="1.33"/>
+        android:clipToPadding="false"
+        app:viewpagerAspectRatio="1.78"
+        app:itemAspectRatio="1.33"/>
 ```
 
 | Attribute Name           | Default | Allowed Values                |
@@ -74,12 +77,16 @@ And then add the below to your app's build.gradle:
 | viewpagerAspectRatio     | 0       | any float (width / height)    |
 | wrap_content(deprecated) | true    | true / false                  |
 | scrollInterval           | 5000    | any integer (represents ms)   | 
+| itemAspectRatio          | 0       | any float (width / height)    |
 
 viewpagerAspectRatio 0 means does not apply aspectRatio.  
 That means, default LoopingViewPager has no aspect ratio and wrap_content is true.  
-Once aspect ratio is set, wrap_content will be overrided (meaningless).
+Once aspect ratio is set, wrap_content will be overrided (meaningless).  
 
 In most cases, you should set an aspect ratio.  
+
+`itemAspectRatio` is the aspectRatio of the the item. So, if itemAspectRatio is higher than viewpagerAspectRatio, you can use `clipToPadding="false"` to create a peek item effect.  
+You can refer to [#17](https://github.com/siralam/LoopingViewPager/issues/17).
 
 If you wonder why you need to set `app:wrap_content="true"`, take a look at [this Stackoverflow post](https://stackoverflow.com/questions/8394681/android-i-am-unable-to-have-viewpager-wrap-content).
 
@@ -91,6 +98,7 @@ You should
 1. Specify the data type in the generic (`<DataType>`)
 2. Create your own constructor according to this `DataType`
 3. override `inflateView()` and `bindView()`
+4. DO NOT override getCount(). Look at `LoopingPagerAdapter`. getCount() has special implementation.
 
 ```java
 public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
@@ -257,6 +265,9 @@ As far as I can find out, I noticed the below problems:
 if you cannot accept these minor defects, I suggest you use `onIndicatorPageChange()` only.
 
 ## Release notes
+
+v.1.2.0
+- Added requirement mentioned in #17.
 
 v1.1.4
 - Merged #11.
