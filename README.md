@@ -52,7 +52,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.2.0'
+    implementation 'com.asksira.android:loopingviewpager:1.3.0'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -81,7 +81,7 @@ And then add the below to your app's build.gradle:
 
 viewpagerAspectRatio 0 means does not apply aspectRatio.  
 That means, default LoopingViewPager has no aspect ratio and wrap_content is true.  
-Once aspect ratio is set, wrap_content will be overrided (meaningless).  
+Once aspect ratio is set, wrap_content will be overridden (meaningless).
 
 In most cases, you should set an aspect ratio.  
 
@@ -100,52 +100,56 @@ You should
 3. override `inflateView()` and `bindView()`
 4. DO NOT override getCount(). Look at `LoopingPagerAdapter`. getCount() has special implementation.
 
-```java
-public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
-
-    public DemoInfiniteAdapter(Context context, ArrayList<Integer> itemList, boolean isInfinite) {
-        super(context, itemList, isInfinite);
-    }
+```kotlin
+class DemoInfiniteAdapter(
+    context: Context,
+    itemList: ArrayList<YourObject>,
+    isInfinite: Boolean
+) : LoopingPagerAdapter<YourObject>(context, itemList, isInfinite) {
 
     //This method will be triggered if the item View has not been inflated before.
-    @Override
-    protected View inflateView(int viewType, ViewGroup container, int listPosition) {
-        return LayoutInflater.from(context).inflate(R.layout.item_pager, container, false);
+    override fun inflateView(
+        viewType: Int,
+        container: ViewGroup,
+        listPosition: Int
+    ): View {
+        return LayoutInflater.from(context).inflate(R.layout.item_pager, container, false)
     }
 
     //Bind your data with your item View here.
     //Below is just an example in the demo app.
     //You can assume convertView will not be null here.
     //You may also consider using a ViewHolder pattern.
-    @Override
-    protected void bindView(View convertView, int listPosition, int viewType) {
-        convertView.findViewById(R.id.image).setBackgroundColor(context.getResources().getColor(getBackgroundColor(listPosition)));
-        TextView description = convertView.findViewById(R.id.description);
-        description.setText(String.valueOf(itemList.get(listPosition)));
+    override fun bindView(
+        convertView: View,
+        listPosition: Int,
+        viewType: Int
+    ) {
+        convertView.findViewById<View>(R.id.image).setBackgroundColor(context.resources.getColor(getBackgroundColor(listPosition)))
+        val description = convertView.findViewById<TextView>(R.id.description)
+        description.text = itemList?.get(listPosition).toString()
     }
 }
 ```
 
 ### Step 3: Bind LoopingViewPager with your Adapter
 
-```java
-        adapter = new DemoInfiniteAdapter(context, dataItems, true);
-        viewPager.setAdapter(adapter);
+```kotlin
+        adapter = DemoInfiniteAdapter(context, dataItems, true)
+        loopingViewPager.setAdapter(adapter)
 ```
 
 ### Step 4: Resume and Pause autoScroll in your Activity (If you need autoScroll)
 
-```java
-    @Override
-    protected void onResume() {
-        super.onResume();
-        viewPager.resumeAutoScroll();
+```kotlin
+    override fun onResume() {
+        super.onResume()
+        loopingViewPager.resumeAutoScroll()
     }
 
-    @Override
-    protected void onPause() {
-        viewPager.pauseAutoScroll();
-        super.onPause();
+    override fun onPause() {
+        loopingViewPager.pauseAutoScroll()
+        super.onPause()
     }
 ```
 
@@ -153,19 +157,18 @@ public class DemoInfiniteAdapter extends LoopingPagerAdapter<Integer> {
 
 If you have new data to update to your adapter, simply call:
 
-```java
-adapter.setItemList(newItemList);
-viewPager.reset(); //In order to reset the current page position
+```kotlin
+adapter.setItemList(newItemList)
+viewPager.reset() //In order to reset the current page position
 ```
 
 ## How do I implement different View types?
 
 Simple! Override one more method in your Adapter:
 
-```java
-    @Override
-    protected int getItemViewType(int listPosition) {
-        //Return your own view type, same as what you did when using RecyclerView
+```kotlin
+    override fun getItemViewType(listPosition: Int): Int {
+        return if (itemList?.get(listPosition) == 0) VIEW_TYPE_SPECIAL else VIEW_TYPE_NORMAL
     }
 ```
 
@@ -175,96 +178,84 @@ You may also refer to the demo app for a complete example.
 
 ## How do I integrate a Page Indicator?
 
-I don't provide a built-in page indicator because:
+I don't officially provide a built-in page indicator because:
 1. ViewPager and Indicator are logically separated
 2. I want to make this library adaptable to all page indicators
 
-With that said, I personally suggest using this [PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView).  
-I create this demo and tested using this library.
+With that said, I have created a simple `CustomShapePagerIndicator` included in this library.  
+It is simple but very flexible, because you need to / you can provide your own implementation of how to inflate the unselected and selected indicators.
 
-### Principle
+I assume for any indicator libraries you use, they should provide a method for you to call so that you can simply redirect `onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int)` of `ViewPager.OnPageChangeListener` to the indicator library,  
+And then the indicator library will then be able to handle the transitions for you, which is also the case in `CustomShapePagerIndicator`.
 
-There are 2 callbacks in `LoopingViewPager` that are designed to tell a PageIndicator 2 things:
-1. I am now being scrolled to a new page, please update your indicator transition position;
-2. I am now being selected to a new page, please update your indicator selected position.
+So, the job of `LoopingViewPager` is simply to mask the infinite behavior into a `onPageScrolled` behavior which looks like it is not infinite.  
+In other words, when you scroll from last page to first page, it will be converted to directing jumping from last page back to first page;  
+When you scroll from first page backward to last page, it will be converted to directing jumping from first page to last page.  
+If you do not accept this assumption, I am sorry but you probably need to find something else.
 
-And a public method `getIndicatorCount()` that can tell the indicator how many indicators(dots) should it show.
+So, instead of adding another `onPageChangeListener`, you simply do this:  
+(Below example is using built in `CustomShapePagerIndicator`)
 
-### Example
-
-And here is an example using [PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView):
-
-```java
-        //Do not bind IndicatorView directly with ViewPager.
-        //Below is how we achieve the effect by binding manually.
-
-        //Tell the IndicatorView that how many indicators should it display:
-        indicatorView.setCount(viewPager.getIndicatorCount());
-
-        //Set IndicatorPageChangeListener on LoopingViewPager.
-        //When the methods are called, update the Indicator accordingly.
-        viewPager.setIndicatorPageChangeListener(new LoopingViewPager.IndicatorPageChangeListener() {
-            @Override
-            public void onIndicatorProgress(int selectingPosition, float progress) {
-            }
-
-            @Override
-            public void onIndicatorPageChange(int newIndicatorPosition) {
-                indicatorView.setSelection(newIndicatorPosition);
-            }
-        });
+```kotlin
+loopingViewPager.onIndicatorProgress = { selectingPosition, progress -> 
+    indicatorView.onPageScrolled(selectingPosition, progress)
+}
 ```
 
-Don't forget to update the indicator counts if you updated items in adapter:
+Note that this is a brand new implementation of how `LoopingViewPager` in v1.3.0, after I realized how wrong I was 2 years ago.  
+If you need to stick with the old implementation, please use v1.2.0 and checkout the README.md at the commit before this version.
 
-```java
-indicatorView.setCount(viewPager.getIndicatorCount());
+### If you want to use CustomShapePagerIndicator, here is how
+
+(You can always refer to the demo app.)
+
+First, add `CustomShapePagerIndicator` to your XML, use wrap_content for width and height,  
+And specify the spacing between unselected indicators (`app:indicator_spacing="?dp"`):
+
+```xml
+    <com.asksira.android.customshapepagerindicator.CustomShapePagerIndicator
+        android:id="@+id/indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/viewpager"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="8dp"
+        app:indicator_spacing="4dp"/>
 ```
 
-By implementing this way, you can basically use any indicators you like, as long as that indicator allows you to configure programmatically (1) The number of indicators; (2) Which indicator is selected. And even, if it supports, (3) The progress of indicator transition effect.
-
-### Advanced: Interactive Indicator Animation
-
-You may have already noticed, there is an interactive effect - where the indicator position follows the swipe action of user, as shown in the second GIF in the demo section.
-
-If you want to do this, use the below instead:
-
-```java
-        viewPager.setIndicatorPageChangeListener(new LoopingViewPager.IndicatorPageChangeListener() {
-            @Override
-            public void onIndicatorProgress(int selectingPosition, float progress) {
-                indicatorView.setProgress(selectingPosition, progress);
-            }
-
-            @Override
-            public void onIndicatorPageChange(int newIndicatorPosition) {
-            }
-        });
+Then, tell the indicator how to inflate your unselected of highlighter indicators:
+```kotlin
+        customShapePagerIndicator.highlighterViewDelegate = {
+            val highlighter = View(this)
+            highlighter.layoutParams = FrameLayout.LayoutParams(16.dp(), 2.dp())
+            highlighter.setBackgroundColor(getColorCompat(R.color.white))
+            highlighter
+        }
+        customShapePagerIndicator.unselectedViewDelegate = {
+            val unselected = View(this)
+            unselected.layoutParams = LinearLayout.LayoutParams(16.dp(), 2.dp())
+            unselected.setBackgroundColor(getColorCompat(R.color.white))
+            unselected.alpha = 0.4f
+            unselected
+        }
 ```
 
-In my demo, I am using the [PageIndicatorView](https://github.com/romandanylyk/PageIndicatorView).  
-This PageIndicatorView expects you to handle the indicator progress solely by yourself, i.e. The indicator **will not finish its animation if you call setSelection()** on it.  
-e.g. I scrolled to 50% from page 1 to page 2. Then I released by finger. `PageIndicatorView` expects you to continue calling `setProgress()` from 0.5, 0.6, all the way to 0.99, 1.0; instead of calling `setCurrentItem()` the moment you released your finger.  
-I call this type of indicator **non-smart**. Default handling of LoopingViewPager treats indicator as non-smart.
+Note that you must provide a fixed width and height for your indicators.  
+Because `CustomShapePagerIndicator` use margins internally to handle indicator spacing, please do not specify your own margin when providing your own views.
 
-If you have another `IndicatorView` which is smart (i.e. It will finish the animation by itself if you call `setSelection()` the moment user released his finger), do the following:
+Finally, for the first time and whenever you need to update your indicator counts:
 
-```java
-        viewPager.setIndicatorSmart(true);
+```kotlin
+customShapePagerIndicator.updateIndicatorCounts(loopingViewPager.indicatorCount)
 ```
-
-By setting this, `LoopingViewPager` will call `onIndicatorProgress()` only when user is dragging, but not after he released his finger.  
-Therefore you should call `indicatorView.setSelection(newIndicatorPosition)` in `onIndicatorPageChange()`.
-
-
-However, I have to warn you that, up to the current release, the effect of `onIndicatorProgress()` is still imperfect on non-smart indicators.  
-As far as I can find out, I noticed the below problems:  
-1. If user swipes very fastly, i.e. before `ViewPager` reaches `SCROLL_STATE_IDLE`, directly from `SCROLL_STATE_SETTLING` to `SCROLL_STATE_DRAGGING`, the indicator will not move until user released his finger again. This is not obvious unless user is attempting to test this indicator effect.
-2. If user skip pages very fastly, e.g. from page 1 to page 6 and then to page 3 quickly, the indicator may appears in a wrong position for a short moment.
-
-if you cannot accept these minor defects, I suggest you use `onIndicatorPageChange()` only.
 
 ## Release notes
+
+v1.3.0
+- Converted eveything to Kotlin
+- Revamp the whole logic of pager indicator handling
+- Added built-in `CustomShapePagerIndicator`
 
 v.1.2.0
 - Added requirement mentioned in #17.

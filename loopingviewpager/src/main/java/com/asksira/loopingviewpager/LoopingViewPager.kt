@@ -217,28 +217,6 @@ class LoopingViewPager : ViewPager {
 
     /**
      * A method that helps you integrate a ViewPager Indicator.
-     * This method returns the expected position (Starting from 0) of indicators.
-     * This method should be used after currentPagePosition is updated.
-     */
-    val indicatorPosition: Int
-        get() = if (!isInfinite) {
-            currentPagePosition
-        } else {
-            if (adapter !is LoopingPagerAdapter<*>) {
-                currentPagePosition
-            }
-            if (currentPagePosition == 0) { //Dummy last item is selected. Indicator should be at the last one
-                (adapter as LoopingPagerAdapter<*>).listCount - 1
-            } else if (currentPagePosition == (adapter as LoopingPagerAdapter<*>).lastItemPosition + 1) {
-                //Dummy first item is selected. Indicator should be at the first one
-                0
-            } else {
-                currentPagePosition - 1
-            }
-        }
-
-    /**
-     * A method that helps you integrate a ViewPager Indicator.
      * This method returns the expected count of indicators.
      */
     val indicatorCount: Int
