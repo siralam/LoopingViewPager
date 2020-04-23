@@ -7,7 +7,6 @@
       <module fileurl="file://$PROJECT_DIR$/app/LoopingViewPager-app.iml" filepath="$PROJECT_DIR$/app/LoopingViewPager-app.iml" group="LoopingViewPager/app" />
       <module fileurl="file://$PROJECT_DIR$/loopingviewpager/LoopingViewPager-loopingviewpager.iml" filepath="$PROJECT_DIR$/loopingviewpager/LoopingViewPager-loopingviewpager.iml" group="LoopingViewPager/loopingviewpager" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/customshapepagerindicator/customshapepagerindicator.iml" filepath="$PROJECT_DIR$/customshapepagerindicator/customshapepagerindicator.iml" group="LoopingViewPager/customshapepagerindicator" />
       <module fileurl="file://$PROJECT_DIR$/loopingviewpager/loopingviewpager.iml" filepath="$PROJECT_DIR$/loopingviewpager/loopingviewpager.iml" />
     </modules>
   </component>

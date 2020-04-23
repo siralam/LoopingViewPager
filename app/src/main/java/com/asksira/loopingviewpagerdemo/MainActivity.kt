@@ -7,8 +7,8 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.asksira.android.customshapepagerindicator.CustomShapePagerIndicator
 import com.asksira.loopingviewpager.LoopingViewPager
+import com.asksira.loopingviewpager.indicator.CustomShapePagerIndicator
 import java.util.*
 
 class MainActivity : AppCompatActivity() {

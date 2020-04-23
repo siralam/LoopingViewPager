@@ -1,4 +1,4 @@
-package com.asksira.android.customshapepagerindicator
+package com.asksira.loopingviewpager.indicator
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import com.asksira.loopingviewpager.R
 
 class CustomShapePagerIndicator: FrameLayout {
 
@@ -38,7 +39,8 @@ class CustomShapePagerIndicator: FrameLayout {
     }
 
     private fun init(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) {
-        val a = context.theme.obtainStyledAttributes(attrs, R.styleable.CustomShapePagerIndicator, 0, 0)
+        val a = context.theme.obtainStyledAttributes(attrs,
+            R.styleable.CustomShapePagerIndicator, 0, 0)
         try {
             indicatorSpacing = a.getDimensionPixelSize(R.styleable.CustomShapePagerIndicator_indicator_spacing, 0)
         } finally {

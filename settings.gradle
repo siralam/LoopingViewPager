@@ -1,1 +1,1 @@
-include ':app', ':loopingviewpager', ':customshapepagerindicator'
+include ':app', ':loopingviewpager'

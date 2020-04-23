@@ -10,4 +10,8 @@
         <attr name="itemAspectRatio" format="float"/>
     </declare-styleable>
 
+    <declare-styleable name="CustomShapePagerIndicator">
+        <attr name="indicator_spacing" format="dimension"/>
+    </declare-styleable>
+
 </resources>

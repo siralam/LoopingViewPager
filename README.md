@@ -52,7 +52,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.3.0'
+    implementation 'com.asksira.android:loopingviewpager:1.3.1'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -252,7 +252,7 @@ customShapePagerIndicator.updateIndicatorCounts(loopingViewPager.indicatorCount)
 
 ## Release notes
 
-v1.3.0
+v1.3.1
 - Converted eveything to Kotlin
 - Revamp the whole logic of pager indicator handling
 - Added built-in `CustomShapePagerIndicator`

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <declare-styleable name="CustomShapePagerIndicator">
-        <attr name="indicator_spacing" format="dimension"/>
-    </declare-styleable>
-
-</resources>

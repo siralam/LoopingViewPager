@@ -20,7 +20,7 @@
         app:itemAspectRatio="1.33"
         app:scrollInterval="3000"/>
 
-    <com.asksira.android.customshapepagerindicator.CustomShapePagerIndicator
+    <com.asksira.loopingviewpager.indicator.CustomShapePagerIndicator
         android:id="@+id/indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
