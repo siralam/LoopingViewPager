@@ -3,6 +3,7 @@ package com.asksira.loopingviewpager
 import android.content.Context
 import android.os.Handler
 import android.util.AttributeSet
+import android.view.MotionEvent
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import kotlin.math.floor
@@ -151,6 +152,16 @@ class LoopingViewPager : ViewPager {
             }
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
+    }
+
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if (isAutoScroll)
+            when (ev.action) {
+                MotionEvent.ACTION_DOWN -> pauseAutoScroll()
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> resumeAutoScroll()
+            }
+
+        return super.onTouchEvent(ev)
     }
 
     protected fun init() {
