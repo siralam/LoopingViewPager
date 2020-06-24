@@ -263,7 +263,9 @@ class LoopingViewPager : ViewPager {
 
     private fun getRealPosition(position: Int): Int {
         if (!isInfinite || adapter == null) return position
-        return if (position == 0) {
+        return if (adapter!!.count == 1) {
+            0
+        } else if (position == 0) {
             adapter!!.count - 1 - 2 //First item is a dummy of last item
         } else if (position > adapter!!.count - 2) {
             0 //Last item is a dummy of first item
