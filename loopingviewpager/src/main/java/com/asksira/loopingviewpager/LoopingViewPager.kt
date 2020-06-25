@@ -272,7 +272,7 @@ class LoopingViewPager : ViewPager {
         resumeAutoScroll()
     }
 
-    private fun getRealPosition(position: Int): Int {
+    fun getRealPosition(position: Int): Int {
         if (!isInfinite || adapter == null) return position
         return if (adapter!!.count == 1) {
             0
