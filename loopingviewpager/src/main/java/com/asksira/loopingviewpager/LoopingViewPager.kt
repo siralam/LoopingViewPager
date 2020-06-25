@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.View
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import kotlin.math.floor
@@ -162,6 +163,16 @@ class LoopingViewPager : ViewPager {
             }
 
         return super.onTouchEvent(ev)
+    }
+
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+
+        if (visibility == View.VISIBLE) {
+            resumeAutoScroll()
+        } else {
+            pauseAutoScroll()
+        }
     }
 
     protected fun init() {
