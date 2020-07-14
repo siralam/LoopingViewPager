@@ -252,8 +252,11 @@ customShapePagerIndicator.updateIndicatorCounts(loopingViewPager.indicatorCount)
 
 ## Release notes
 
+v1.3.2
+- Fixed crash due to getChildAt() returns null
+
 v1.3.1
-- Converted eveything to Kotlin
+- Converted everything to Kotlin
 - Revamp the whole logic of pager indicator handling
 - Added built-in `CustomShapePagerIndicator`
 

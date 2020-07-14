@@ -66,7 +66,7 @@ class CustomShapePagerIndicator: FrameLayout {
         highlighterView = highlighterViewDelegate?.invoke(flSelectedIndicatorContainer)
         highlighterView?.let { flSelectedIndicatorContainer.addView(it) }
         highlighterView?.afterMeasured {
-            x = llUnselectedIndicators.getChildAt(currentSelectedPosition).x
+            x = llUnselectedIndicators.getChildAt(currentSelectedPosition)?.x ?: 0f
         }
         llUnselectedIndicators.afterMeasured {
             flSelectedIndicatorContainer.layoutParams = flSelectedIndicatorContainer.layoutParams.apply {
@@ -85,7 +85,7 @@ class CustomShapePagerIndicator: FrameLayout {
             val rhs = llUnselectedIndicators.getChildAt(position+1)
             when {
                 lhs == null -> { //Assume it is the first one
-                    val toX = llUnselectedIndicators.getChildAt(1).x
+                    val toX = llUnselectedIndicators.getChildAt(1)?.x ?: 0f
                     highlighterView?.x = toX * positionOffset
                 }
                 rhs == null -> { //Which means lhs is already the end. This case we will flip from end to the beginning
