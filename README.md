@@ -4,13 +4,12 @@ A ViewPager and a PagerAdapter that can:
 
 1. AutoScroll (On/Off able)
 2. Infinite Loop (On/Off able)
-3. ViewPager's height can be wrap_content / an aspect ratio
-4. Adjustable auto scroll interval
-5. Won't scroll nor loop if there is only 1 item
-6. Works well with notifyDataSetChanged()
-7. Supports page indicators
-8. Supports different view types
-9. **(New! 1.2.0)** Support peeking adjacent items (But first and last item will appear only after scroll state is idle)
+3. Adjustable auto scroll interval
+4. Won't scroll nor loop if there is only 1 item
+5. Works well with notifyDataSetChanged()
+6. Supports page indicators
+7. Supports different view types
+7. Support peeking adjacent items (But first and last item will appear only after scroll state is idle)
 
 ## Demo Effect
 
@@ -29,10 +28,9 @@ I cannot find one that fits all of the below requirements:
 2. Last updated in less than 3 years
 3. Good infinite looping effect 
 4. Configurable auto-scroll
-5. ViewPager that supports fixed aspect ratio
-6. Good support with Page Indicators
+5. Good support with Page Indicators
 
-Especially for 6, even some of them supports, they provide built-in indicators only; or does not tell user how to implement their own indicator.  
+Especially for 5, even some of them supports, they provide built-in indicators only; or does not tell user how to implement their own indicator.  
 I wrote this library to tackle all of these problems I faced after trying a whole day with other libraries.
 
 ## Usage
@@ -60,37 +58,33 @@ And then add the below to your app's build.gradle:
 ```xml
     <com.asksira.loopingviewpager.LoopingViewPager
         android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:isInfinite="true"
         app:autoScroll="true"
         app:scrollInterval="5000"
         android:clipToPadding="false"
-        app:viewpagerAspectRatio="1.78"
+        app:layout_constraintDimensionRatio="1.78"
         app:itemAspectRatio="1.33"/>
 ```
+
+(The above xml example is placed inside a ConstraintLayout.)
 
 | Attribute Name           | Default | Allowed Values                |
 |:-------------------------|:--------|:------------------------------|
 | isInfinite               | false   | true / false                  |
 | autoScroll               | false   | true / false                  |
-| viewpagerAspectRatio     | 0       | any float (width / height)    |
 | wrap_content(deprecated) | true    | true / false                  |
 | scrollInterval           | 5000    | any integer (represents ms)   | 
 | itemAspectRatio          | 0       | any float (width / height)    |
 
-viewpagerAspectRatio 0 means does not apply aspectRatio.  
-That means, default LoopingViewPager has no aspect ratio and wrap_content is true.  
-Once aspect ratio is set, wrap_content will be overridden (meaningless).
+Please note that the height of `LoopingViewPager` should be decided by its parent, like all other Views.  
+If you want it to have a specific aspect ratio, you can place it inside a `ConstraintLayout` and give it the attribute `layout_constraintDimensionRatio`.
 
-In most cases, you should set an aspect ratio.  
+(The old versions of this library uses an internal attribute to determine its height, which is completely wrong and can lead to bugs!)
 
 `itemAspectRatio` is the aspectRatio of the the item. So, if itemAspectRatio is higher than viewpagerAspectRatio, you can use `clipToPadding="false"` to create a peek item effect.  
 You can refer to [#17](https://github.com/siralam/LoopingViewPager/issues/17).
-
-If you wonder why you need to set `app:wrap_content="true"`, take a look at [this Stackoverflow post](https://stackoverflow.com/questions/8394681/android-i-am-unable-to-have-viewpager-wrap-content).
-
-**wrap_content is deprecated in v1.1.3**. It is still available but I think there can be unknown problems. I am not going to debug issues related to setting wrap_content to true as well.
 
 ### Step 2: Create your PagerAdapter that extends LoopingPagerAdapter
 
@@ -251,6 +245,9 @@ customShapePagerIndicator.updateIndicatorCounts(loopingViewPager.indicatorCount)
 ```
 
 ## Release notes
+
+v1.4.0
+- Removed setting aspect ratio inside LoopingViewPager. Let its parent to decide how to layout it (i.e. its height).
 
 v1.3.2
 - Fixed crash due to getChildAt() returns null
