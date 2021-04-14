@@ -5,8 +5,6 @@ import android.os.Handler
 import android.util.AttributeSet
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import kotlin.math.floor
-import kotlin.math.roundToInt
 
 /**
  * A ViewPager that auto-scrolls, and supports infinite scroll.
@@ -16,7 +14,6 @@ class LoopingViewPager : ViewPager {
     protected var isInfinite = true
     protected var isAutoScroll = false
     protected var wrapContent = true
-    protected var aspectRatio = 0f
     protected var itemAspectRatio = 0f
 
     //AutoScroll
@@ -54,103 +51,12 @@ class LoopingViewPager : ViewPager {
             isAutoScroll = a.getBoolean(R.styleable.LoopingViewPager_autoScroll, false)
             wrapContent = a.getBoolean(R.styleable.LoopingViewPager_wrap_content, true)
             interval = a.getInt(R.styleable.LoopingViewPager_scrollInterval, 5000)
-            aspectRatio = a.getFloat(R.styleable.LoopingViewPager_viewpagerAspectRatio, 0f)
             itemAspectRatio = a.getFloat(R.styleable.LoopingViewPager_itemAspectRatio, 0f)
             isAutoScrollResumed = isAutoScroll
         } finally {
             a.recycle()
         }
         init()
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        var heightMeasureSpec = heightMeasureSpec
-        val width = MeasureSpec.getSize(widthMeasureSpec)
-        if (aspectRatio > 0) {
-            val height =
-                (MeasureSpec.getSize(widthMeasureSpec).toFloat() / aspectRatio).roundToInt()
-            val finalWidthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY)
-            val finalHeightMeasureSpec =
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
-
-            /*
-             * If child items can scale, fit inside their parent by increasing left/right padding.
-             * https://github.com/siralam/LoopingViewPager/issues/17
-             */if (itemAspectRatio > 0 && itemAspectRatio != aspectRatio) {
-                // super has to be called in the beginning so the child views can be initialized.
-                super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-                // Remove padding from width
-                var childWidthSize = width - paddingLeft - paddingRight
-                // Make child width MeasureSpec
-                var childWidthMeasureSpec =
-                    MeasureSpec.makeMeasureSpec(childWidthSize, MeasureSpec.EXACTLY)
-                var i = 0
-                while (i < childCount) {
-                    val child = getChildAt(i)
-                    child.measure(
-                        childWidthMeasureSpec,
-                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-                    )
-                    val w = child.measuredWidth
-                    val h = child.measuredHeight
-                    if (h > 0 && h > height) {
-                        val ratio = w.toFloat() / h
-                        // Round down largest width that fits.
-                        val optimalWidth =
-                            floor(height * ratio.toDouble())
-                        // Round up new padding size.
-                        val newPadding =
-                            ((width - optimalWidth) / 2).roundToInt()
-                        // Set new padding values
-                        setPadding(newPadding, paddingTop, newPadding, paddingBottom)
-                        // Remove padding from width
-                        childWidthSize = width - paddingLeft - paddingRight
-                        // Make child width MeasureSpec
-                        childWidthMeasureSpec =
-                            MeasureSpec.makeMeasureSpec(childWidthSize, MeasureSpec.EXACTLY)
-                        child.measure(
-                            childWidthMeasureSpec,
-                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-                        )
-                    } else {
-                        i++
-                    }
-                }
-            }
-            super.onMeasure(finalWidthMeasureSpec, finalHeightMeasureSpec)
-        } else {
-            //https://stackoverflow.com/a/24666987/7870874
-            if (wrapContent) {
-                val mode = MeasureSpec.getMode(heightMeasureSpec)
-                // Unspecified means that the ViewPager is in a ScrollView WRAP_CONTENT.
-                // At Most means that the ViewPager is not in a ScrollView WRAP_CONTENT.
-                if (mode == MeasureSpec.UNSPECIFIED || mode == MeasureSpec.AT_MOST) {
-                    // super has to be called in the beginning so the child views can be initialized.
-                    super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-                    var height = 0
-                    // Remove padding from width
-                    val childWidthSize = width - paddingLeft - paddingRight
-                    // Make child width MeasureSpec
-                    val childWidthMeasureSpec =
-                        MeasureSpec.makeMeasureSpec(childWidthSize, MeasureSpec.EXACTLY)
-                    for (i in 0 until childCount) {
-                        val child = getChildAt(i)
-                        child.measure(
-                            childWidthMeasureSpec,
-                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-                        )
-                        val h = child.measuredHeight
-                        if (h > height) {
-                            height = h
-                        }
-                    }
-                    // Add padding back to child height
-                    height += paddingTop + paddingBottom
-                    heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
-                }
-            }
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        }
     }
 
     protected fun init() {
