@@ -2,6 +2,7 @@ package com.asksira.loopingviewpager
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
@@ -20,7 +21,7 @@ class LoopingViewPager : ViewPager {
     private var interval = 5000
     private var currentPagePosition = 0
     private var isAutoScrollResumed = false
-    private val autoScrollHandler = Handler()
+    private val autoScrollHandler = Handler(Looper.getMainLooper())
     private val autoScrollRunnable = Runnable {
         if (adapter == null || !isAutoScroll || adapter?.count ?: 0 < 2) return@Runnable
         if (!isInfinite && adapter?.count ?: 0 - 1 == currentPagePosition) {
