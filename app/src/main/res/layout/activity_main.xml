@@ -16,8 +16,9 @@
         app:isInfinite="true"
         app:autoScroll="true"
         android:clipToPadding="false"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
         app:layout_constraintDimensionRatio="1.78"
-        app:itemAspectRatio="1.33"
         app:scrollInterval="3000"/>
 
     <com.asksira.loopingviewpager.indicator.CustomShapePagerIndicator

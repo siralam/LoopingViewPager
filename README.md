@@ -37,12 +37,12 @@ I wrote this library to tackle all of these problems I faced after trying a whol
 
 ### Add to Project
 
-First make sure `jcenter()` is included as a repository in your **project**'s build.gradle:  
+First make sure `mavenCentral()` is included as a repository in your **project**'s build.gradle:  
 
 ```groovy
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 }
 ```
@@ -50,7 +50,7 @@ allprojects {
 And then add the below to your app's build.gradle:  
 
 ```groovy
-    implementation 'com.asksira.android:loopingviewpager:1.3.1'
+    implementation 'com.asksira.android:loopingviewpager:1.4.1'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
@@ -63,9 +63,7 @@ And then add the below to your app's build.gradle:
         app:isInfinite="true"
         app:autoScroll="true"
         app:scrollInterval="5000"
-        android:clipToPadding="false"
-        app:layout_constraintDimensionRatio="1.78"
-        app:itemAspectRatio="1.33"/>
+        app:layout_constraintDimensionRatio="1.78"/>
 ```
 
 (The above xml example is placed inside a ConstraintLayout.)
@@ -74,17 +72,14 @@ And then add the below to your app's build.gradle:
 |:-------------------------|:--------|:------------------------------|
 | isInfinite               | false   | true / false                  |
 | autoScroll               | false   | true / false                  |
-| wrap_content(deprecated) | true    | true / false                  |
 | scrollInterval           | 5000    | any integer (represents ms)   | 
-| itemAspectRatio          | 0       | any float (width / height)    |
 
 Please note that the height of `LoopingViewPager` should be decided by its parent, like all other Views.  
 If you want it to have a specific aspect ratio, you can place it inside a `ConstraintLayout` and give it the attribute `layout_constraintDimensionRatio`.
 
 (The old versions of this library uses an internal attribute to determine its height, which is completely wrong and can lead to bugs!)
 
-`itemAspectRatio` is the aspectRatio of the the item. So, if itemAspectRatio is higher than viewpagerAspectRatio, you can use `clipToPadding="false"` to create a peek item effect.  
-You can refer to [#17](https://github.com/siralam/LoopingViewPager/issues/17).
+Note: If you want the ViewPager to be able to peek adjacent items, make use of `clipToPadding=false` and set padding to the ViewPager. (`itemAspectRatio` has been removed in v1.4.1)
 
 ### Step 2: Create your PagerAdapter that extends LoopingPagerAdapter
 
@@ -96,10 +91,9 @@ You should
 
 ```kotlin
 class DemoInfiniteAdapter(
-    context: Context,
     itemList: ArrayList<YourObject>,
     isInfinite: Boolean
-) : LoopingPagerAdapter<YourObject>(context, itemList, isInfinite) {
+) : LoopingPagerAdapter<YourObject>(itemList, isInfinite) {
 
     //This method will be triggered if the item View has not been inflated before.
     override fun inflateView(
@@ -107,7 +101,7 @@ class DemoInfiniteAdapter(
         container: ViewGroup,
         listPosition: Int
     ): View {
-        return LayoutInflater.from(context).inflate(R.layout.item_pager, container, false)
+        return LayoutInflater.from(container.context).inflate(R.layout.item_pager, container, false)
     }
 
     //Bind your data with your item View here.
@@ -119,7 +113,7 @@ class DemoInfiniteAdapter(
         listPosition: Int,
         viewType: Int
     ) {
-        convertView.findViewById<View>(R.id.image).setBackgroundColor(context.resources.getColor(getBackgroundColor(listPosition)))
+        convertView.findViewById<View>(R.id.image).setBackgroundColor(convertView.context.resources.getColor(getBackgroundColor(listPosition)))
         val description = convertView.findViewById<TextView>(R.id.description)
         description.text = itemList?.get(listPosition).toString()
     }
@@ -129,7 +123,7 @@ class DemoInfiniteAdapter(
 ### Step 3: Bind LoopingViewPager with your Adapter
 
 ```kotlin
-        adapter = DemoInfiniteAdapter(context, dataItems, true)
+        adapter = DemoInfiniteAdapter(dataItems, true)
         loopingViewPager.setAdapter(adapter)
 ```
 
@@ -246,8 +240,11 @@ customShapePagerIndicator.updateIndicatorCounts(loopingViewPager.indicatorCount)
 
 ## Release notes
 
-v1.4.0
+v1.4.1
 - Removed setting aspect ratio inside LoopingViewPager. Let its parent to decide how to layout it (i.e. its height).
+- Same as above, removed itemAspectRatio as well. You can actually simply set it through padding and `clipToPadding=false`.
+- Removed unnecessary context as a param in LoopingPagerAdapter's constructor.  
+- Migrated from JCenter() to MavenCentral().
 
 v1.3.2
 - Fixed crash due to getChildAt() returns null

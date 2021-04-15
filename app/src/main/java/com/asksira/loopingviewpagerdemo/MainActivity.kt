@@ -39,7 +39,8 @@ class MainActivity : AppCompatActivity() {
         page4 = findViewById(R.id.page4)
         page5 = findViewById(R.id.page5)
         page6 = findViewById(R.id.page6)
-        adapter = DemoInfiniteAdapter(this, createDummyItems(), true)
+
+        adapter = DemoInfiniteAdapter(createDummyItems(), true)
         viewPager.adapter = adapter
 
         //Custom bind indicator

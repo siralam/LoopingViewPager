@@ -15,7 +15,6 @@ class LoopingViewPager : ViewPager {
     protected var isInfinite = true
     protected var isAutoScroll = false
     protected var wrapContent = true
-    protected var itemAspectRatio = 0f
 
     //AutoScroll
     private var interval = 5000
@@ -52,7 +51,6 @@ class LoopingViewPager : ViewPager {
             isAutoScroll = a.getBoolean(R.styleable.LoopingViewPager_autoScroll, false)
             wrapContent = a.getBoolean(R.styleable.LoopingViewPager_wrap_content, true)
             interval = a.getInt(R.styleable.LoopingViewPager_scrollInterval, 5000)
-            itemAspectRatio = a.getFloat(R.styleable.LoopingViewPager_itemAspectRatio, 0f)
             isAutoScrollResumed = isAutoScroll
         } finally {
             a.recycle()

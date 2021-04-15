@@ -1,6 +1,5 @@
 package com.asksira.loopingviewpager
 
-import android.content.Context
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import androidx.viewpager.widget.PagerAdapter
  * And then silently changing to the same, real item, thus looks like infinite.
  */
 abstract class LoopingPagerAdapter<T>(
-    protected var context: Context,
     itemList: List<T>,
     isInfinite: Boolean
 ) : PagerAdapter() {
