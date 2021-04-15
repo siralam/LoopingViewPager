@@ -1,6 +1,5 @@
 package com.asksira.loopingviewpagerdemo
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +8,9 @@ import com.asksira.loopingviewpager.LoopingPagerAdapter
 import java.util.*
 
 class DemoInfiniteAdapter(
-    context: Context,
     itemList: ArrayList<Int>,
     isInfinite: Boolean
-) : LoopingPagerAdapter<Int>(context, itemList, isInfinite) {
+) : LoopingPagerAdapter<Int>(itemList, isInfinite) {
 
     override fun getItemViewType(listPosition: Int): Int {
         return if (itemList?.get(listPosition) == 0) VIEW_TYPE_SPECIAL else VIEW_TYPE_NORMAL
@@ -24,8 +22,8 @@ class DemoInfiniteAdapter(
         listPosition: Int
     ): View {
         return if (viewType == VIEW_TYPE_SPECIAL) LayoutInflater.from(
-            context
-        ).inflate(R.layout.item_special, container, false) else LayoutInflater.from(context)
+            container.context
+        ).inflate(R.layout.item_special, container, false) else LayoutInflater.from(container.context)
             .inflate(R.layout.item_pager, container, false)
     }
 
@@ -36,7 +34,7 @@ class DemoInfiniteAdapter(
     ) {
         if (viewType == VIEW_TYPE_SPECIAL) return
         convertView.findViewById<View>(R.id.image)
-            .setBackgroundColor(context.resources.getColor(getBackgroundColor(listPosition)))
+            .setBackgroundColor(convertView.context.resources.getColor(getBackgroundColor(listPosition)))
         val description = convertView.findViewById<TextView>(R.id.description)
         description.text = itemList?.get(listPosition).toString()
     }
