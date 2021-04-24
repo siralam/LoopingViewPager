@@ -1,5 +1,6 @@
 package com.asksira.loopingviewpagerdemo
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var page4: Button
     private lateinit var page5: Button
     private lateinit var page6: Button
+    private lateinit var btnGoListActivity: Button
     private var currentDataSet = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +33,11 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.viewpager)
         indicatorView = findViewById(R.id.indicator)
         changeDataSetButton = findViewById(R.id.change_dataset)
+        btnGoListActivity = findViewById(R.id.btnListActivity)
         changeDataSetButton.setOnClickListener(View.OnClickListener { changeDataset() })
+        btnGoListActivity.setOnClickListener {
+            startActivity(Intent(this, ListActivity::class.java))
+        }
         changePageLabel = findViewById(R.id.change_page_label)
         page1 = findViewById(R.id.page1)
         page2 = findViewById(R.id.page2)
@@ -81,31 +87,6 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         viewPager.pauseAutoScroll()
         super.onPause()
-    }
-
-    private fun createDummyItems(): ArrayList<Int> {
-        val items = ArrayList<Int>()
-        items.add(0, 1)
-        items.add(1, 2)
-        items.add(2, 3)
-        items.add(3, 4)
-        items.add(4, 5)
-        items.add(5, 6)
-        items.add(6, 0)
-        return items
-    }
-
-    private fun createSecondDummyItems(): ArrayList<Int> {
-        val items = ArrayList<Int>()
-        items.add(0, 1)
-        items.add(1, 2)
-        return items
-    }
-
-    private fun createThirdDummyItems(): ArrayList<Int> {
-        val items = ArrayList<Int>()
-        items.add(0, 1)
-        return items
     }
 
     private fun changeDataset() {

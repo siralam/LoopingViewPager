@@ -101,4 +101,14 @@
         app:layout_constraintTop_toTopOf="@id/page5"
         app:layout_constraintLeft_toRightOf="@id/page5"/>
 
+    <Button
+        android:id="@+id/btnListActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Try Pager In RecyclerView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
