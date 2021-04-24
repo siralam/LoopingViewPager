@@ -24,7 +24,7 @@ class DemoInfiniteAdapter(
         return if (viewType == VIEW_TYPE_SPECIAL) LayoutInflater.from(
             container.context
         ).inflate(R.layout.item_special, container, false) else LayoutInflater.from(container.context)
-            .inflate(R.layout.item_pager, container, false)
+            .inflate(R.layout.item_page, container, false)
     }
 
     override fun bindView(
