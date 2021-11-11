@@ -4,14 +4,14 @@
     <declare-styleable name="LoopingViewPager">
         <attr name="isInfinite" format="boolean" />
         <attr name="autoScroll" format="boolean" />
-        <attr name="wrap_content" format="boolean" />
         <attr name="scrollInterval" format="integer"/>
-        <attr name="viewpagerAspectRatio" format="float"/>
-        <attr name="itemAspectRatio" format="float"/>
     </declare-styleable>
 
     <declare-styleable name="CustomShapePagerIndicator">
         <attr name="indicator_spacing" format="dimension"/>
+        <attr name="indicator_size" format="dimension"/>
+        <attr name="drawable_selected" format="reference"/>
+        <attr name="drawable_normal" format="reference"/>
     </declare-styleable>
 
 </resources>

@@ -4,13 +4,9 @@ import java.util.ArrayList
 
 fun createDummyItems(): ArrayList<Int> {
     val items = ArrayList<Int>()
-    items.add(0, 1)
-    items.add(1, 2)
-    items.add(2, 3)
-    items.add(3, 4)
-    items.add(4, 5)
-    items.add(5, 6)
-    items.add(6, 0)
+    (0..4).forEach {
+        items.add(it + 1)
+    }
     return items
 }
 

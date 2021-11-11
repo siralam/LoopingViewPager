@@ -4,7 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.viewbinding.ViewBinding
 import com.asksira.loopingviewpager.LoopingPagerAdapter
+import com.asksira.loopingviewpagerdemo.databinding.ItemPageBinding
+import com.asksira.loopingviewpagerdemo.databinding.ItemSpecialBinding
 import java.util.*
 
 class DemoInfiniteAdapter(
@@ -16,39 +19,49 @@ class DemoInfiniteAdapter(
         return if (itemList?.get(listPosition) == 0) VIEW_TYPE_SPECIAL else VIEW_TYPE_NORMAL
     }
 
-    override fun inflateView(
-        viewType: Int,
-        container: ViewGroup,
-        listPosition: Int
-    ): View {
-        return if (viewType == VIEW_TYPE_SPECIAL) LayoutInflater.from(
-            container.context
-        ).inflate(R.layout.item_special, container, false) else LayoutInflater.from(container.context)
-            .inflate(R.layout.item_page, container, false)
+    override fun inflateView(viewType: Int, container: ViewGroup, listPosition: Int): ViewBinding {
+        return if (viewType == VIEW_TYPE_SPECIAL) {
+            ItemSpecialBinding.inflate(
+                LayoutInflater.from(
+                    container.context
+                ), container, false
+            )
+        } else {
+            ItemPageBinding.inflate(
+                LayoutInflater.from(
+                    container.context
+                ), container, false
+            )
+        }
     }
 
     override fun bindView(
-        convertView: View,
+        binding: ViewBinding,
         listPosition: Int,
         viewType: Int
     ) {
-        if (viewType == VIEW_TYPE_SPECIAL) return
-        convertView.findViewById<View>(R.id.image)
-            .setBackgroundColor(convertView.context.resources.getColor(getBackgroundColor(listPosition)))
-        val description = convertView.findViewById<TextView>(R.id.description)
-        description.text = itemList?.get(listPosition).toString()
+        if (binding is ItemSpecialBinding) return
+        if (binding is ItemPageBinding) {
+            binding.image
+                .setBackgroundColor(
+                    binding.root.context.resources.getColor(
+                        getBackgroundColor()
+                    )
+                )
+            binding.message = itemList?.get(listPosition).toString()
+        }
     }
 
-    private fun getBackgroundColor(number: Int): Int {
-        return when (number) {
-            0 -> android.R.color.holo_red_light
-            1 -> android.R.color.holo_orange_light
-            2 -> android.R.color.holo_green_light
-            3 -> android.R.color.holo_blue_light
-            4 -> android.R.color.holo_purple
-            5 -> android.R.color.black
-            else -> android.R.color.black
-        }
+    val colorSelector = mutableListOf<Int>(
+        android.R.color.holo_red_light,
+        android.R.color.holo_orange_light,
+        android.R.color.holo_green_light,
+        android.R.color.holo_blue_light,
+        android.R.color.holo_purple
+    )
+
+    private fun getBackgroundColor(): Int {
+        return colorSelector.random()
     }
 
     companion object {

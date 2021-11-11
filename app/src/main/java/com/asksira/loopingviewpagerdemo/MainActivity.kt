@@ -2,90 +2,67 @@ package com.asksira.loopingviewpagerdemo
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.asksira.loopingviewpager.LoopingViewPager
-import com.asksira.loopingviewpager.indicator.CustomShapePagerIndicator
-import java.util.*
+import androidx.databinding.DataBindingUtil
+import com.asksira.loopingviewpagerdemo.databinding.ActivityMainBinding
+import com.asksira.loopingviewpagerdemo.databinding.ItemSelectedBinding
+import com.asksira.loopingviewpagerdemo.databinding.ItemUnselectedBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var viewPager: LoopingViewPager
+    private lateinit var binding: ActivityMainBinding
     private var adapter: DemoInfiniteAdapter? = null
-    private lateinit var indicatorView: CustomShapePagerIndicator
-    private lateinit var changeDataSetButton: Button
-    private lateinit var changePageLabel: TextView
-    private lateinit var page1: Button
-    private lateinit var page2: Button
-    private lateinit var page3: Button
-    private lateinit var page4: Button
-    private lateinit var page5: Button
-    private lateinit var page6: Button
-    private lateinit var btnGoListActivity: Button
     private var currentDataSet = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        viewPager = findViewById(R.id.viewpager)
-        indicatorView = findViewById(R.id.indicator)
-        changeDataSetButton = findViewById(R.id.change_dataset)
-        btnGoListActivity = findViewById(R.id.btnListActivity)
-        changeDataSetButton.setOnClickListener(View.OnClickListener { changeDataset() })
-        btnGoListActivity.setOnClickListener {
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        binding.changeDataset.setOnClickListener { changeDataset() }
+        binding.btnListActivity.setOnClickListener {
             startActivity(Intent(this, ListActivity::class.java))
         }
-        changePageLabel = findViewById(R.id.change_page_label)
-        page1 = findViewById(R.id.page1)
-        page2 = findViewById(R.id.page2)
-        page3 = findViewById(R.id.page3)
-        page4 = findViewById(R.id.page4)
-        page5 = findViewById(R.id.page5)
-        page6 = findViewById(R.id.page6)
+
 
         adapter = DemoInfiniteAdapter(createDummyItems(), true)
-        viewPager.adapter = adapter
+        binding.viewpager.adapter = adapter
 
-        //Custom bind indicator
-        indicatorView.highlighterViewDelegate = {
-            val highlighter = View(this)
-            highlighter.layoutParams = FrameLayout.LayoutParams(16.dp(), 2.dp())
-            highlighter.setBackgroundColor(getColorCompat(R.color.white))
-            highlighter
+        binding.viewpager.onIndicatorProgress = { selectingPosition, progress ->
+            binding.indicator.onPageScrolled(
+                selectingPosition,
+                progress
+            )
         }
-        indicatorView.unselectedViewDelegate = {
-            val unselected = View(this)
-            unselected.layoutParams = LinearLayout.LayoutParams(16.dp(), 2.dp())
-            unselected.setBackgroundColor(getColorCompat(R.color.white))
-            unselected.alpha = 0.4f
-            unselected
-        }
-        viewPager.onIndicatorProgress = { selectingPosition, progress -> indicatorView.onPageScrolled(selectingPosition, progress) }
-        val pageSelector =
+        setupClicks()
+        binding.indicator.updateIndicatorCounts(binding.viewpager.indicatorCount)
+    }
+
+    private fun setupClicks() {
+        val pageSelectorListener =
             View.OnClickListener { v ->
                 val number =
                     Integer.valueOf((v as Button).text.toString())
-                viewPager.currentItem = if (adapter?.isInfinite == true) number else number - 1
+                binding.viewpager.currentItem =
+                    if (adapter?.isInfinite == true) number else number - 1
             }
-        page1.setOnClickListener(pageSelector)
-        page2.setOnClickListener(pageSelector)
-        page3.setOnClickListener(pageSelector)
-        page4.setOnClickListener(pageSelector)
-        page5.setOnClickListener(pageSelector)
-        page6.setOnClickListener(pageSelector)
-        indicatorView.updateIndicatorCounts(viewPager.indicatorCount)
+        binding.page1.setOnClickListener(pageSelectorListener)
+        binding.page2.setOnClickListener(pageSelectorListener)
+        binding.page3.setOnClickListener(pageSelectorListener)
+        binding.page4.setOnClickListener(pageSelectorListener)
+        binding.page5.setOnClickListener(pageSelectorListener)
+        binding.page6.setOnClickListener(pageSelectorListener)
     }
 
     override fun onResume() {
         super.onResume()
-        viewPager.resumeAutoScroll()
+        binding.viewpager.resumeAutoScroll()
     }
 
     override fun onPause() {
-        viewPager.pauseAutoScroll()
+        binding.viewpager.pauseAutoScroll()
         super.onPause()
     }
 
@@ -103,18 +80,18 @@ class MainActivity : AppCompatActivity() {
             currentDataSet = 1
             toggleSixButtons(true)
         }
-        indicatorView.updateIndicatorCounts(viewPager.indicatorCount)
-        viewPager.reset()
+        binding.indicator.updateIndicatorCounts(binding.viewpager.indicatorCount)
+        binding.viewpager.reset()
     }
 
     private fun toggleSixButtons(isVisible: Boolean) {
         val status = if (isVisible) View.VISIBLE else View.GONE
-        changePageLabel.visibility = status
-        page1.visibility = status
-        page2.visibility = status
-        page3.visibility = status
-        page4.visibility = status
-        page5.visibility = status
-        page6.visibility = status
+        binding.changePageLabel.visibility = status
+        binding.page1.visibility = status
+        binding.page2.visibility = status
+        binding.page3.visibility = status
+        binding.page4.visibility = status
+        binding.page5.visibility = status
+        binding.page6.visibility = status
     }
 }

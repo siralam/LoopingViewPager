@@ -14,8 +14,6 @@
         app:isInfinite="true"
         app:autoScroll="true"
         android:clipToPadding="false"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
         app:layout_constraintDimensionRatio="1.78"
         app:scrollInterval="3000"/>
 

@@ -12,9 +12,8 @@ import androidx.viewpager.widget.ViewPager
  * For infinite Scroll, you may use LoopingPagerAdapter.
  */
 class LoopingViewPager : ViewPager {
-    protected var isInfinite = true
-    protected var isAutoScroll = false
-    protected var wrapContent = true
+    private var isInfinite = true
+    private var isAutoScroll = false
 
     //AutoScroll
     private var interval = 5000
@@ -49,7 +48,6 @@ class LoopingViewPager : ViewPager {
         try {
             isInfinite = a.getBoolean(R.styleable.LoopingViewPager_isInfinite, false)
             isAutoScroll = a.getBoolean(R.styleable.LoopingViewPager_autoScroll, false)
-            wrapContent = a.getBoolean(R.styleable.LoopingViewPager_wrap_content, true)
             interval = a.getInt(R.styleable.LoopingViewPager_scrollInterval, 5000)
             isAutoScrollResumed = isAutoScroll
         } finally {

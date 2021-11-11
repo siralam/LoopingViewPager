@@ -3,6 +3,7 @@ package com.asksira.loopingviewpager
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewbinding.ViewBinding
 import androidx.viewpager.widget.PagerAdapter
 
 /**
@@ -21,7 +22,7 @@ abstract class LoopingPagerAdapter<T>(
             canInfinite = (itemList?.size ?: 0) > 1
             notifyDataSetChanged()
         }
-    protected var viewCache = SparseArray<View>()
+    protected var viewCache = SparseArray<ViewBinding>()
     var isInfinite = false
         protected set
     protected var canInfinite = true
@@ -42,7 +43,7 @@ abstract class LoopingPagerAdapter<T>(
         viewType: Int,
         container: ViewGroup,
         listPosition: Int
-    ): View
+    ): ViewBinding
 
     /**
      * Child should override this method to bind the View with data.
@@ -53,7 +54,7 @@ abstract class LoopingPagerAdapter<T>(
      * @param listPosition The current list position for you to get data from itemList.
      */
     protected abstract fun bindView(
-        convertView: View,
+        binding: ViewBinding,
         listPosition: Int,
         viewType: Int
     )
@@ -70,7 +71,7 @@ abstract class LoopingPagerAdapter<T>(
         val listPosition =
             if (isInfinite && canInfinite) getListPosition(position) else position
         val viewType = getItemViewType(listPosition)
-        val convertView: View
+        val convertView: ViewBinding
         if (viewCache[viewType, null] == null) {
             convertView = inflateView(viewType, container, listPosition)
         } else {
@@ -78,7 +79,7 @@ abstract class LoopingPagerAdapter<T>(
             viewCache.remove(viewType)
         }
         bindView(convertView, listPosition, viewType)
-        container.addView(convertView)
+        container.addView(convertView.root)
         return convertView
     }
 
@@ -86,7 +87,7 @@ abstract class LoopingPagerAdapter<T>(
         view: View,
         `object`: Any
     ): Boolean {
-        return view === `object`
+        return view === (`object` as ViewBinding).root
     }
 
     override fun destroyItem(
@@ -96,7 +97,7 @@ abstract class LoopingPagerAdapter<T>(
     ) {
         val listPosition =
             if (isInfinite && canInfinite) getListPosition(position) else position
-        container.removeView(`object` as View)
+        container.removeView((`object` as ViewBinding).root)
         if (!dataSetChangeLock) viewCache.put(
             getItemViewType(listPosition),
             `object`
