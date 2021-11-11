@@ -244,6 +244,9 @@ v1.5.0
 - Use data binding.
 - Use recyclerview to display indicators.
 - Update indicator attributes to more advance.
+   - `drawable_normal`
+   - `drawable_selected`
+   - `indicator_size`
 
 v1.4.1
 
