@@ -239,6 +239,12 @@ Finally, for the first time and whenever you need to update your indicator count
 
 ## Release notes
 
+v1.5.0
+
+- Use data binding.
+- Use recyclerview to display indicators.
+- Update indicator attributes to more advance.
+
 v1.4.1
 
 - Removed setting aspect ratio inside LoopingViewPager. Let its parent to decide how to layout it (
