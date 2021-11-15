@@ -32,7 +32,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation project(':loopingviewpager')
-//    implementation 'com.asksira.android:loopingviewpager:1.4.1'
+//    implementation 'com.endless.viewpager:endless-viewpager:1.0'
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

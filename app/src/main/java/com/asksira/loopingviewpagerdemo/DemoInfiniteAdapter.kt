@@ -1,9 +1,7 @@
 package com.asksira.loopingviewpagerdemo
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.viewbinding.ViewBinding
 import com.asksira.loopingviewpager.LoopingPagerAdapter
 import com.asksira.loopingviewpagerdemo.databinding.ItemPageBinding

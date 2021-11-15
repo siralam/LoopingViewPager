@@ -1,0 +1,42 @@
+apply plugin: 'kotlin-android'
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = GROUP
+            artifactId = POM_ARTIFACT_ID
+            version = VERSION_NAME
+            artifact(sourceJar)
+            artifact("$buildDir/libs/loopingviewpager-sources.jar")
+
+            pom {
+                name = POM_NAME
+                packaging = POM_PACKAGING
+                description = POM_DESCRIPTION
+                // uncomment this if you want to add url to your library/company
+                // url POM_URL
+            }
+
+            repositories {
+                maven {
+                    credentials {
+                        username USERNAME
+                        password PASSWORD
+                    }
+                    url = MAVEN_REPOSITORY_URL
+                    allowInsecureProtocol = true
+                }
+            }
+        }
+    }
+}
