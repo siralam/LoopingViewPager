@@ -45,22 +45,3 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
-
-publishing {
-    repositories {
-        maven {
-//            url = POM_URL
-//            allowInsecureProtocol = true
-//            credentials {
-//                username USERNAME
-//                password PASSWORD
-//            }
-        }
-    }
-}
-mavenPublish {
-    releaseSigningEnabled = false
-//    androidVariantToPublish = "debug"
-//    mavenCentralUsername=USERNAME
-//    mavenCentralPassword=PASSWORD
-}
