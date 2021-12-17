@@ -53,7 +53,7 @@ allprojects {
 And then add the below to your app's build.gradle:
 
 ```groovy
-    implementation 'com.dhiwise:endless-viewpager:1.0.0'
+    implementation 'com.dhiwise:endless-viewpager:$VERSION_NAME'
 ```
 
 ### Step 1: Create LoopingViewPager in XML
