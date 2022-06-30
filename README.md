@@ -1,3 +1,9 @@
+# Deprecated (Temp)
+
+I think I am not maintaining version 1.x.x anymore, and if I have time and interested in the future, I might re-write it using Compose.
+
+With that said, I do think v1.4.1 is stable enough to use with ViewPager (Not ViewPager2). In case it is having issue with new versions of Kotlin / Android libraries, I wish you can folk it and use it with simple fixes. Thank you!
+
 # LoopingViewPager
 
 A ViewPager and a PagerAdapter that can:
